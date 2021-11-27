@@ -1,0 +1,123 @@
+#welcome_popup {
+    input, textarea {
+        width: 230px;
+    }
+
+    input:focus,
+    input:active {
+        padding-right: 30px;
+    }
+
+    .fileupload {
+        display: none;
+    }
+
+    div > label {
+        position: relative;
+    }
+
+    .welcome-undo {
+        position: absolute;
+        top: -7px; // input padding
+        right: 4px; // input right margin + border
+        cursor: pointer;
+        opacity: .3;
+        padding: 7px;
+        vertical-align: top;
+        display: inline-block;
+        visibility: hidden;
+        height: 32px; // height of input
+        width: 32px; // height of input
+    }
+    form.uploadButton {
+        width: 411px;
+    }
+    form .welcome-undo,
+    .welcome-remove-bg {
+        cursor: pointer;
+        opacity: .3;
+        padding: 7px;
+        vertical-align: top;
+        display: inline-block;
+        float: right;
+        position: relative;
+        top: 4px;
+        right: 0px;
+        visibility: visible;
+        height: 32px;
+        width: 32px;
+    }
+    input[type='text']:hover + .welcome-undo,
+    input[type='text'] + .welcome-undo:hover,
+    input[type='text']:focus + .welcome-undo,
+    input[type='text']:active + .welcome-undo,
+    input[type='url']:hover + .welcome-undo,
+    input[type='url'] + .welcome-undo:hover,
+    input[type='url']:focus + .welcome-undo,
+    input[type='url']:active + .welcome-undo{
+        visibility: visible;
+    }
+
+    label span {
+        display: inline-block;
+        min-width: 175px;
+        padding: 8px 0px;
+        vertical-align: top;
+    }
+
+    .icon-upload,
+    .uploadButton .icon-loading-small {
+        padding: 8px 20px;
+        width: 20px;
+        margin: 2px 0px;
+        min-height: 32px;
+        display: inline-block;
+    }
+
+    #welcome_settings_status {
+        height: 26px;
+        margin: 10px;
+    }
+
+    #welcome_settings_loading {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+
+    #welcome_settings_msg {
+        vertical-align: middle;
+        border-radius: 3px;
+    }
+
+    #welcome-preview {
+        #welcome-preview-logo {
+            width: 100%;
+            height: 100%;
+            display: inline-block;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+    }
+
+    .welcome-hints {
+        margin-top: 20px;
+    }
+
+    .image-preview {
+        display: inline-block;
+        width: 80px;
+        height: 36px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+}
+
+/* transition effects for theming value changes */
+#header {
+    transition: background-color 500ms linear;
+    svg, img {
+        transition: 500ms filter linear;
+    }
+}
