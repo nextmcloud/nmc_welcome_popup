@@ -29,7 +29,7 @@ $en = 'en_GB';
 $du = 'de_DE';
 
 ?>
-<div id="welcome_popup" class="section" style="display: inline-block">
+<div id="welcome_popup" class="section">
 	<h2 class="inlineblock"><?php p($l->t('Create a new welcome pop-up')); ?></h2>
 	<p class="settings-hint"><?php p($l->t('Slide 1')); ?></p>
 	<div>
@@ -45,13 +45,14 @@ $du = 'de_DE';
 			<input type="hidden" name="key" value="welcome_image" />
 			<label for="en-uploadimage"><span style="min-width: 50px;">Image</span></label>
 			<input id="en-uploadimage" class="fileupload" name="image" type="file" />
-			<label for="en-uploadimage" class="button icon-upload svg" id="en-uploadimage" title="<?php p($l->t('Header image for the pop-up')) ?>"></label>
-			<label id="en-image-uploaded"></label>
+			<div class="image-label">
+				<label for="en-uploadimage" class="button icon-upload svg" id="en-uploadimage" title="<?php p($l->t('Header image for the pop-up')) ?>"></label>
+				<label id="en-image-uploaded"></label>
+			</div>
 		</form>
 	</div>
-	<!--<div id="welcome-preview">
-		<div id="welcome-preview-logo"></div>
-	</div>-->
+</div>
+<div id="welcome_popup" class="section section-deutsch" style="display: inline-block">
 	<h3 class="inlineblock">Deutsch</h3>
 	<div>
 		<label>
@@ -91,8 +92,7 @@ $du = 'de_DE';
 	</div>
 </div>
 </div>
-
-<div id="welcome_popup" class="section" style="display: inline-block">
+<div id="welcome_popup" class="section section-english" style="display: inline-block">
 	<h2 class="inlineblock"></h2>
 	<p class="settings-hint"></p>
 	<div>

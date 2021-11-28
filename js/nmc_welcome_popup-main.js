@@ -6258,6 +6258,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 
@@ -12853,7 +12856,7 @@ module.exports = exports;
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, ".modal-mask[data-v-7ba5bd90] {\n  background-color: rgba(0, 0, 0, 0.7);\n}\n.modal-mask[data-v-7ba5bd90] .modal-wrapper {\n    position: relative;\n}\n.modal-mask[data-v-7ba5bd90] .modal-container {\n    display: flex;\n    flex-direction: column;\n    height: 95% !important;\n    width: 95% !important;\n    max-width: 900px;\n    max-height: 650px !important;\n    position: relative;\n}\n.modal-mask .modal-body[data-v-7ba5bd90] {\n    flex-grow: 1;\n    overflow-x: hidden;\n    overflow-y: auto;\n}\n.modal-mask .modal-body > div[data-v-7ba5bd90] {\n      flex-grow: 1;\n      align-items: center;\n      justify-content: center;\n}\n.modal-header[data-v-7ba5bd90] {\n  height: 180px;\n  max-height: 40vh;\n  overflow: hidden;\n  flex-shrink: 0;\n}\n.modal-header .nmc_welcome_popup-header[data-v-7ba5bd90] {\n    padding: 20px 12px;\n    background: var(--color-primary) var(--image-login-background) no-repeat 50% 50%;\n    background-size: cover;\n    color: var(--color-primary-text);\n    text-align: center;\n}\n.modal-header .nmc_welcome_popup-header .logo[data-v-7ba5bd90] {\n      background-size: contain;\n      width: 175px;\n      height: 100px;\n      max-height: 20vh;\n      margin: 0 auto;\n}\n.modal-header .nmc_welcome_popup-header h2[data-v-7ba5bd90] {\n      font-size: 20px;\n      margin-top: 7px;\n      line-height: 150%;\n      color: var(--color-primary-text);\n      font-weight: 300;\n      padding: 0 0 10px;\n}\n.modal-default-button[data-v-7ba5bd90] {\n  align-self: flex-end;\n}\n.modal-footer[data-v-7ba5bd90] {\n  overflow: hidden;\n  position: absolute;\n  display: flex;\n  bottom: 0;\n  right: 0;\n}\n.modal-footer button[data-v-7ba5bd90] {\n  margin: 10px;\n}\n\n/* Transitions */\n.next-enter-active[data-v-7ba5bd90], .next-leave-active[data-v-7ba5bd90],\n.previous-enter-active[data-v-7ba5bd90], .previous-leave-active[data-v-7ba5bd90] {\n  transition: transform .1s, opacity .25s;\n}\n.next-enter[data-v-7ba5bd90] {\n  transform: translateX(50%);\n  opacity: 0;\n}\n.next-leave-to[data-v-7ba5bd90] {\n  transform: translateX(-50%);\n  opacity: 0;\n}\n.previous-enter[data-v-7ba5bd90] {\n  transform: translateX(-50%);\n  opacity: 0;\n}\n.previous-leave-to[data-v-7ba5bd90] {\n  transform: translateX(50%);\n  opacity: 0;\n}\n", ""]);
+exports.push([module.i, ".modal-mask[data-v-7ba5bd90] {\n  background-color: rgba(0, 0, 0, 0.7);\n}\n.modal-mask[data-v-7ba5bd90] .modal-wrapper {\n    position: relative;\n}\n.modal-mask[data-v-7ba5bd90] .modal-container {\n    display: flex;\n    flex-direction: column;\n    height: 95% !important;\n    width: 95% !important;\n    max-width: 900px;\n    max-height: 650px !important;\n    position: relative;\n}\n.modal-mask .modal-body[data-v-7ba5bd90] {\n    flex-grow: 1;\n    overflow-x: hidden;\n    overflow-y: auto;\n}\n.modal-mask .modal-body > div[data-v-7ba5bd90] {\n      flex-grow: 1;\n      align-items: center;\n      justify-content: center;\n}\n.modal-mask .modal-body .logo[data-v-7ba5bd90] {\n      background-size: contain;\n      width: 175px;\n      height: 100px;\n      max-height: 20vh;\n      margin: 0 auto;\n}\n.modal-header[data-v-7ba5bd90] {\n  height: 180px;\n  max-height: 40vh;\n  overflow: hidden;\n  flex-shrink: 0;\n}\n.modal-header .nmc_welcome_popup-header[data-v-7ba5bd90] {\n    padding: 20px 12px;\n    background: var(--color-primary) var(--image-login-background) no-repeat 50% 50%;\n    background-size: cover;\n    color: var(--color-primary-text);\n    text-align: center;\n}\n.modal-header .nmc_welcome_popup-header h2[data-v-7ba5bd90] {\n      font-size: 20px;\n      margin-top: 7px;\n      line-height: 150%;\n      color: var(--color-primary-text);\n      font-weight: 300;\n      padding: 0 0 10px;\n}\n.modal-default-button[data-v-7ba5bd90] {\n  align-self: flex-end;\n}\n.modal-footer[data-v-7ba5bd90] {\n  overflow: hidden;\n  position: absolute;\n  display: flex;\n  bottom: 0;\n  right: 0;\n}\n.modal-footer button[data-v-7ba5bd90] {\n  margin: 10px;\n}\n\n/* Transitions */\n.next-enter-active[data-v-7ba5bd90], .next-leave-active[data-v-7ba5bd90],\n.previous-enter-active[data-v-7ba5bd90], .previous-leave-active[data-v-7ba5bd90] {\n  transition: transform .1s, opacity .25s;\n}\n.next-enter[data-v-7ba5bd90] {\n  transform: translateX(50%);\n  opacity: 0;\n}\n.next-leave-to[data-v-7ba5bd90] {\n  transform: translateX(-50%);\n  opacity: 0;\n}\n.previous-enter[data-v-7ba5bd90] {\n  transform: translateX(-50%);\n  opacity: 0;\n}\n.previous-leave-to[data-v-7ba5bd90] {\n  transform: translateX(50%);\n  opacity: 0;\n}\n", ""]);
 // Exports
 module.exports = exports;
 
@@ -29214,18 +29217,6 @@ var render = function() {
                     domProps: {
                       innerHTML: _vm._s(_vm.slideList[_vm.currentSlide].title)
                     }
-                  }),
-                  _vm._v(" "),
-                  _c("div", {
-                    staticClass: "logo",
-                    style: {
-                      backgroundImage:
-                        "url(" +
-                        _vm.slideList[_vm.currentSlide].image_url +
-                        ")",
-                      backgroundRepeat: "no-repeat",
-                      backgroundPosition: "center"
-                    }
                   })
                 ])
               ])
@@ -29238,8 +29229,17 @@ var render = function() {
               _vm.slideList.length > 0
                 ? _vm._t("body", function() {
                     return [
+                      _c("div", { staticClass: "logo" }, [
+                        _c("img", {
+                          attrs: {
+                            src: _vm.slideList[_vm.currentSlide].image_url
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
                       _c("div", {
                         key: _vm.currentSlide,
+                        staticClass: "content",
                         domProps: {
                           innerHTML: _vm._s(
                             _vm.slideList[_vm.currentSlide].content
@@ -38583,4 +38583,4 @@ window.OCA.NMC_Welcome_Popup = {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=f5e906ee1ac0e87de978
+//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=14d964322736e14feb67
