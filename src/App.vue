@@ -12,26 +12,16 @@
 		<div v-if="currentSlide !== 0 || !withIntro" class="modal-header">
 			<div class="nmc_welcome_popup-header">
 				<h2 v-html="slideList[currentSlide].title" />
-<<<<<<< HEAD
-=======
-				<div class="logo"
-					v-bind:style="{backgroundImage:`url(${slideList[currentSlide].image_url})`, backgroundRepeat: `no-repeat`, backgroundPosition: `center`}" />
->>>>>>> c8108af9d8468e840930cf874717cd9f2f71a361
 			</div>
 		</div>
 		<div class="modal-body">
 			<slot v-if="slideList.length > 0" name="body">
-<<<<<<< HEAD
 				<div class="logo">
 					<img v-bind:src="slideList[currentSlide].image_url" />
 				</div>
 				<!-- v-bind:style="{backgroundImage:`url(${slideList[currentSlide].image_url})`, backgroundRepeat: `no-repeat`, backgroundPosition: `center`}" /> -->
 				<!-- <transition :name="fadeDirection" mode="out-in"> -->
 				<div class="content" :key="currentSlide" v-html="slideList[currentSlide].content" />
-=======
-				<!-- <transition :name="fadeDirection" mode="out-in"> -->
-				<div :key="currentSlide" v-html="slideList[currentSlide].content" />
->>>>>>> c8108af9d8468e840930cf874717cd9f2f71a361
 				<!-- <div :is="slideList[currentSlide]" v-else @finished="currentSlide++" /> -->
 				<!-- </transition> -->
 			</slot>
@@ -269,7 +259,6 @@
 				align-items: center;
 				justify-content: center;
 			}
-<<<<<<< HEAD
 
 			.logo {
 				// background: var(--image-logo) no-repeat center;
@@ -279,8 +268,6 @@
 				max-height: 20vh;
 				margin: 0 auto;
 			}
-=======
->>>>>>> c8108af9d8468e840930cf874717cd9f2f71a361
 		}
 	}
 
@@ -296,17 +283,6 @@
 			background-size: cover;
 			color: var(--color-primary-text);
 			text-align: center;
-<<<<<<< HEAD
-=======
-			.logo {
-				// background: var(--image-logo) no-repeat center;
-				background-size: contain;
-				width: 175px;
-				height: 100px;
-				max-height: 20vh;
-				margin: 0 auto;
-			}
->>>>>>> c8108af9d8468e840930cf874717cd9f2f71a361
 			h2 {
 				font-size: 20px;
 				margin-top: 7px;
