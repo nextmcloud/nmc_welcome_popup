@@ -26,5 +26,6 @@ return [
 		['name' => 'Slide#addSlide', 'url' => '/ajax/addSlide', 'verb' => 'POST'],
 		['name' => 'Slide#getImage', 'url' => '/image/{key}', 'verb' => 'GET'],
 		['name' => 'Slide#uploadImage', 'url' => '/ajax/uploadImage', 'verb' => 'POST'],
+		['name' => 'Slide#deleteImage', 'url' => '/image/{key}', 'verb' => 'DELETE'],
 	],
 ];

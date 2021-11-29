@@ -91,20 +91,16 @@ class SlideController extends Controller {
 
 		$this->config = $config;
 		$this->userId = $userId;
-		//$this->theming = $theming;
-		//$this->groupManager = $groupManager;
 		$this->slideManager = $slideManager;
 		$this->imageManager = $imageManager;
 		$this->scssCacher = $scssCacher;
 		$this->l10n = $l;
 		$this->logger = $logger;
 		$this->urlGenerator = $urlGenerator;
-
-		//$this->slides = explode(',', $this->config->getAppValue(Application::APP_ID, 'slides', ''));
 	}
 
 	public function addSlide($slide) {
-		$this->logger->debug('Slide: ' . print_r($slide, true));
+		//$this->logger->debug('Slide: ' . print_r($slide, true));
 		foreach ($slide as $section => $field) {
 			if (is_array($field)) {
 				$slide[$section] = array_map('trim', $field);
@@ -117,38 +113,30 @@ class SlideController extends Controller {
 		$du = 'de_DE';
 		if ($slide[$en]['title'] == '') {
 			$error = 'No Title';
-		}
-		if ($slide[$en]['primary_button_label'] == '') {
-			$error = 'No Primary button field';
-		}
-		if ($slide[$en]['primary_button_url'] == '') {
+		} elseif ($slide[$en]['primary_button_label'] == '') {
+			$error = 'No Primary button label';
+		} elseif ($slide[$en]['primary_button_url'] == '') {
 			$error = 'No Primary button url';
-		}
-		if ($slide[$en]['display_probability'] == '') {
+		} elseif ($slide[$en]['secondary_button_desc'] == '') {
+			$error = 'No Secondary button description given';
+		} elseif ($slide[$en]['display_probability'] == '') {
 			$error = 'No Disaply probabilty given';
-		}
-		if ($slide[$en]['content'] == '') {
+		} elseif ($slide[$en]['content'] == '') {
 			$error = 'No Text given';
 		}
 		
 		if ($slide[$du]['title'] == '') {
 			$error = 'Kein Titel';
-		}
-		if ($slide[$du]['primary_button_label'] == '') {
-			$error = 'Kein primäres Schaltflächenfeld';
-		}
-		if ($slide[$du]['primary_button_url'] == '') {
+		} elseif ($slide[$du]['primary_button_label'] == '') {
+			$error = 'Keine primäre Schaltflächenbeschriftung';
+		} elseif ($slide[$du]['primary_button_url'] == '') {
 			$error = 'Keine primäre button url';
-		}
-		if ($slide[$du]['display_probability'] == '') {
+		} elseif ($slide[$du]['secondary_button_desc'] == '') {
+			$error = 'Keine Beschreibung der sekundären Schaltfläche angegeben';
+		} elseif ($slide[$du]['display_probability'] == '') {
 			$error = 'Keine Disaply-Wahrscheinlichkeit angegeben';
-		}
-		if ($slide[$du]['content'] == '') {
+		} elseif ($slide[$du]['content'] == '') {
 			$error = 'Kein Text angegeben';
-		}
-
-		if ($slide['image_uploaded'] == '') {
-			$error = 'No Image uploaded';
 		}
 		
 		if ($error !== null) {
@@ -160,7 +148,6 @@ class SlideController extends Controller {
 			], Http::STATUS_BAD_REQUEST);
 		}
 
-		//$this->themingDefaults->set($setting, $value);
 		$this->slideManager->addSlide($slide);
 
 		// reprocess server scss for preview
@@ -274,6 +261,55 @@ class SlideController extends Controller {
 						'image' => $key,
 						'message' => $this->l10n->t('Saved'),
 						'serverCssUrl' => $this->urlGenerator->linkTo('', $this->scssCacher->getCachedSCSS('core', '/core/css/css-variables.scss'))
+					],
+				'status' => 'success'
+			]
+		);
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @param string $key
+	 * @return DataResponse
+	 */
+	public function deleteImage(string $key) {
+		try {
+			$this->imageManager->delete($key);
+			$this->config->deleteAppValue($this->appName, $key . 'Mime');
+			$slide = $this->slideManager->getSlidesToDisplay();
+			if (is_array($slide) && !empty($slide)) {
+				$slide['image_uploaded'] = "";
+				$this->slideManager->addSlide($slide);
+			}
+		} catch (NotFoundException $e) {
+			return new DataResponse(
+				[
+					'data' => [
+						'message' => $e->getMessage()
+					],
+					'status' => 'failure',
+				],
+				Http::STATUS_NOT_FOUND
+			);
+		} catch (NotPermittedException $e) {
+			return new DataResponse(
+				[
+					'data' => [
+						'message' => $e->getMessage()
+					],
+					'status' => 'failure',
+				],
+				Http::STATUS_CONFLICT
+			);
+		}
+
+		return new DataResponse(
+			[
+				'data' =>
+					[
+						'message' => $this->l10n->t('Deleted'),
 					],
 				'status' => 'success'
 			]

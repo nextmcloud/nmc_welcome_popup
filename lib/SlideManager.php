@@ -21,14 +21,6 @@
 
 namespace OCA\NMC_Welcome_Popup;
 
-// use OCA\External\Exceptions\GroupNotFoundException;
-// use OCA\External\Exceptions\IconNotFoundException;
-// use OCA\External\Exceptions\InvalidDeviceException;
-// use OCA\External\Exceptions\InvalidNameException;
-// use OCA\External\Exceptions\InvalidTypeException;
-// use OCA\External\Exceptions\InvalidURLException;
-// use OCA\External\Exceptions\LanguageNotFoundException;
-// use OCA\External\Exceptions\SiteNotFoundException;
 use OCP\App\IAppManager;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;

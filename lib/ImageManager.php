@@ -192,12 +192,14 @@ class ImageManager {
 	}
 
 	public function delete(string $key) {
-		/* ignore exceptions, since we don't want to fail hard if something goes wrong during cleanup */
 		try {
 			$file = $this->appData->getFolder('images')->getFile($key);
 			$file->delete();
+			$this->config->deleteAppValue('nmc_welcome_popup', 'cachebuster');
 		} catch (NotFoundException $e) {
+			throw $e;
 		} catch (NotPermittedException $e) {
+			throw $e;
 		}
 		try {
 			$file = $this->appData->getFolder('images')->getFile($key . '.png');
@@ -208,8 +210,12 @@ class ImageManager {
 	}
 
 	public function updateImage(string $key, string $tmpFile) {
-		$this->delete($key);
-
+		try {
+			$this->delete($key);
+		} catch (NotFoundException $e) {
+		} catch (NotPermittedException $e) {
+			throw new \Exception("Can't upload image. Permission denied.");
+		}
 		try {
 			$folder = $this->appData->getFolder('images');
 		} catch (NotFoundException $e) {

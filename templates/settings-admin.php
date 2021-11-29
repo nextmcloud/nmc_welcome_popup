@@ -28,6 +28,22 @@ style('nmc_welcome_popup', 'settings-admin');
 $en = 'en_GB';
 $du = 'de_DE';
 
+$_['image_uploaded'] = isset($_['image_uploaded']) ? $_['image_uploaded'] : "";
+
+$_[$du]['title'] = isset($_[$du]['title']) ? $_[$du]['title'] : "";
+$_[$du]['primary_button_label'] = isset($_[$du]['primary_button_label']) ? $_[$du]['primary_button_label'] : "";
+$_[$du]['primary_button_url'] = isset($_[$du]['primary_button_url']) ? $_[$du]['primary_button_url'] : "";
+$_[$du]['secondary_button_desc'] = isset($_[$du]['secondary_button_desc']) ? $_[$du]['secondary_button_desc'] : "";
+$_[$du]['display_probability'] = isset($_[$du]['display_probability']) ? $_[$du]['display_probability'] : "";
+$_[$du]['content'] = isset($_[$du]['content']) ? $_[$du]['content'] : "";
+
+$_[$en]['title'] = isset($_[$en]['title']) ? $_[$en]['title'] : "";
+$_[$en]['primary_button_label'] = isset($_[$en]['primary_button_label']) ? $_[$en]['primary_button_label'] : "";
+$_[$en]['primary_button_url'] = isset($_[$en]['primary_button_url']) ? $_[$en]['primary_button_url'] : "";
+$_[$en]['secondary_button_desc'] = isset($_[$en]['secondary_button_desc']) ? $_[$en]['secondary_button_desc'] : "";
+$_[$en]['display_probability'] = isset($_[$en]['display_probability']) ? $_[$en]['display_probability'] : "";
+$_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
+
 ?>
 <div id="welcome_popup" class="section">
 	<h2 class="inlineblock"><?php p($l->t('Create a new welcome pop-up')); ?></h2>
@@ -48,6 +64,7 @@ $du = 'de_DE';
 			<div class="image-label">
 				<label for="en-uploadimage" class="button icon-upload svg" id="en-uploadimage" title="<?php p($l->t('Header image for the pop-up')) ?>"></label>
 				<label id="en-image-uploaded"></label>
+				<a id="remove-img" class="icon-delete" style="display: none;"></a>
 			</div>
 		</form>
 	</div>
@@ -99,9 +116,6 @@ $du = 'de_DE';
 		<div id="welcome_settings_loading" class="icon-loading-small" style="display: none;"></div>
 		<span id="welcome_settings_msg" class="msg success" style="display: none;">Saved</span>
 	</div>
-	<p>
-		<?php p($_['errorMessage']) ?>
-	</p>
 	<h3 class="inlineblock">English</h3>
 	<div>
 		<label>

@@ -112,6 +112,11 @@
         background-repeat: no-repeat;
         background-size: contain;
     }
+    .icon-delete {
+        display: inline-block;
+        padding: 5px;
+        margin-bottom: -6px;
+    }
 }
 
 /* transition effects for theming value changes */
