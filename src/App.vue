@@ -14,7 +14,7 @@
 				<h2 v-html="slideList[currentSlide].title" />
 				<button v-if="isLast"
 					class="primary modal-default-button"
-					@click="close">X</button>
+					@click="close"></button>
 			</div>
 		</div>
 		<div class="modal-body">
