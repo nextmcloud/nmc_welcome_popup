@@ -13,8 +13,8 @@
 			<div class="nmc_welcome_popup-header">
 				<h2 v-html="slideList[currentSlide].title" />
 				<button v-if="isLast"
-				class="primary modal-default-button"
-				@click="close">X</button>
+					class="primary modal-default-button"
+					@click="close">X</button>
 			</div>
 		</div>
 		<div class="modal-body">
