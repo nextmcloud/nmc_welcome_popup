@@ -6261,6 +6261,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 
@@ -29217,7 +29220,18 @@ var render = function() {
                     domProps: {
                       innerHTML: _vm._s(_vm.slideList[_vm.currentSlide].title)
                     }
-                  })
+                  }),
+                  _vm._v(" "),
+                  _vm.isLast
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "primary modal-default-button",
+                          on: { click: _vm.close }
+                        },
+                        [_vm._v("X")]
+                      )
+                    : _vm._e()
                 ])
               ])
             : _vm._e(),
@@ -38583,4 +38597,4 @@ window.OCA.NMC_Welcome_Popup = {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=14d964322736e14feb67
+//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=c5003fd9ad4e47db7806

@@ -12,6 +12,9 @@
 		<div v-if="currentSlide !== 0 || !withIntro" class="modal-header">
 			<div class="nmc_welcome_popup-header">
 				<h2 v-html="slideList[currentSlide].title" />
+				<button v-if="isLast"
+				class="primary modal-default-button"
+				@click="close">X</button>
 			</div>
 		</div>
 		<div class="modal-body">
