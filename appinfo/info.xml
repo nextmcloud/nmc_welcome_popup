@@ -20,7 +20,7 @@
 			<name>Welcome</name>
 			<route></route>
 			<order>5</order>
-			<icon>info.svg</icon>
+			<icon>pop-up_window.svg</icon>
 			<type>settings</type>
 		</navigation>
 	</navigations>

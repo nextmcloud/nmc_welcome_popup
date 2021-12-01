@@ -77,6 +77,6 @@ class Section implements IIconSection {
 	 * {@inheritdoc}
 	 */
 	public function getIcon() {
-		return $this->url->imagePath('nmc_welcome_popup', 'app.svg');
+		return $this->url->imagePath('nmc_welcome_popup', 'pop-up_window.svg');
 	}
 }
