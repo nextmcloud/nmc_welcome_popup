@@ -29264,23 +29264,6 @@ var render = function() {
           ),
           _vm._v(" "),
           _c("div", { staticClass: "modal-footer" }, [
-            _c(
-              "a",
-              {
-                staticClass: "button",
-                attrs: {
-                  href: _vm.slideList[_vm.currentSlide].primary_button_url,
-                  label: _vm.slideList[_vm.currentSlide].primary_button_label,
-                  target: "_blank"
-                }
-              },
-              [
-                _vm._v(
-                  _vm._s(_vm.slideList[_vm.currentSlide].primary_button_label)
-                )
-              ]
-            ),
-            _vm._v(" "),
             _vm.isLast
               ? _c(
                   "button",
@@ -29296,7 +29279,24 @@ var render = function() {
                     )
                   ]
                 )
-              : _vm._e()
+              : _vm._e(),
+            _vm._v(" "),
+            _c(
+              "a",
+              {
+                staticClass: "button",
+                attrs: {
+                  href: _vm.slideList[_vm.currentSlide].primary_button_url,
+                  label: _vm.slideList[_vm.currentSlide].primary_button_label,
+                  target: "_blank"
+                }
+              },
+              [
+                _vm._v(
+                  _vm._s(_vm.slideList[_vm.currentSlide].primary_button_label)
+                )
+              ]
+            )
           ])
         ]
       )
@@ -38593,4 +38593,4 @@ window.OCA.NMC_Welcome_Popup = {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=95131aac5a8b5e2021f9
+//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=3c664c5d596ce9738b79
