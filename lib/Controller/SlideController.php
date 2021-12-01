@@ -119,8 +119,6 @@ class SlideController extends Controller {
 			$error = 'No Primary button url';
 		} elseif ($slide[$en]['secondary_button_desc'] == '') {
 			$error = 'No Secondary button description given';
-		} elseif ($slide[$en]['display_probability'] == '') {
-			$error = 'No Disaply probabilty given';
 		} elseif ($slide[$en]['content'] == '') {
 			$error = 'No Text given';
 		}
@@ -133,8 +131,6 @@ class SlideController extends Controller {
 			$error = 'Keine primäre button url';
 		} elseif ($slide[$du]['secondary_button_desc'] == '') {
 			$error = 'Keine Beschreibung der sekundären Schaltfläche angegeben';
-		} elseif ($slide[$du]['display_probability'] == '') {
-			$error = 'Keine Disaply-Wahrscheinlichkeit angegeben';
 		} elseif ($slide[$du]['content'] == '') {
 			$error = 'Kein Text angegeben';
 		}
@@ -174,9 +170,9 @@ class SlideController extends Controller {
 	 * @return FileDisplayResponse|NotFoundResponse
 	 * @throws NotPermittedException
 	 */
-	public function getImage(string $key, bool $useSvg = true) {
+	public function getImage(string $key) {
 		try {
-			$file = $this->imageManager->getImage($key, $useSvg);
+			$file = $this->imageManager->getImage($key);
 		} catch (NotFoundException $e) {
 			return new NotFoundResponse();
 		}
@@ -188,11 +184,7 @@ class SlideController extends Controller {
 		$response->cacheFor(3600);
 		$response->addHeader('Content-Type', $this->config->getAppValue($this->appName, $key . 'Mime', ''));
 		$response->addHeader('Content-Disposition', 'attachment; filename="' . $key . '"');
-		if (!$useSvg) {
-			$response->addHeader('Content-Type', 'image/png');
-		} else {
-			$response->addHeader('Content-Type', $this->config->getAppValue($this->appName, $key . 'Mime', ''));
-		}
+		$response->addHeader('Content-Type', $this->config->getAppValue($this->appName, $key . 'Mime', ''));
 		return $response;
 	}
 

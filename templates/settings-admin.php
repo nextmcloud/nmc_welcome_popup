@@ -34,14 +34,12 @@ $_[$du]['title'] = isset($_[$du]['title']) ? $_[$du]['title'] : "";
 $_[$du]['primary_button_label'] = isset($_[$du]['primary_button_label']) ? $_[$du]['primary_button_label'] : "";
 $_[$du]['primary_button_url'] = isset($_[$du]['primary_button_url']) ? $_[$du]['primary_button_url'] : "";
 $_[$du]['secondary_button_desc'] = isset($_[$du]['secondary_button_desc']) ? $_[$du]['secondary_button_desc'] : "";
-$_[$du]['display_probability'] = isset($_[$du]['display_probability']) ? $_[$du]['display_probability'] : "";
 $_[$du]['content'] = isset($_[$du]['content']) ? $_[$du]['content'] : "";
 
 $_[$en]['title'] = isset($_[$en]['title']) ? $_[$en]['title'] : "";
 $_[$en]['primary_button_label'] = isset($_[$en]['primary_button_label']) ? $_[$en]['primary_button_label'] : "";
 $_[$en]['primary_button_url'] = isset($_[$en]['primary_button_url']) ? $_[$en]['primary_button_url'] : "";
 $_[$en]['secondary_button_desc'] = isset($_[$en]['secondary_button_desc']) ? $_[$en]['secondary_button_desc'] : "";
-$_[$en]['display_probability'] = isset($_[$en]['display_probability']) ? $_[$en]['display_probability'] : "";
 $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 
 ?>
@@ -96,13 +94,6 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 	<h4 class="inlineblock"></h4>
 	<div>
 		<label>
-			<div>Anzeigenwahrscheinlichkeit</div>
-			<input id="du-display-probability" type="number" placeholder="Wahrscheinlichkeit zwischen 1 und 100" maxlength="3" value="<?php p($_[$du]['display_probability']) ?>" />
-		</label>
-	</div>
-	<h4 class="inlineblock"></h4>
-	<div>
-		<label>
 			<div>Text</div>
 			<textarea id="du-text" placeholder="HTML interpretierender Text für das Pop-up" rows="16" cols="48" maxlength="500"><?php p($_[$du]['content']) ?></textarea>
 		</label>
@@ -137,13 +128,6 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 	<div>
 		<label>
 			<input id="en-secondary-button-desc" type="text" placeholder="Secondary button description to close the pop-up" value="<?php p($_[$en]['secondary_button_desc']) ?>" maxlength="500" />
-		</label>
-	</div>
-	<h4 class="inlineblock"></h4>
-	<div>
-		<label>
-			<div><?php p($l->t('Display probability')) ?></div>
-			<input id="en-display-probability" type="number" placeholder="Probability between 1 and 100" maxlength="3" value="<?php p($_[$en]['display_probability']) ?>" />
 		</label>
 	</div>
 	<h4 class="inlineblock"></h4>

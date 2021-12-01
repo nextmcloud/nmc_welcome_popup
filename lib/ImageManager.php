@@ -76,20 +76,11 @@ class ImageManager {
 		$this->tempManager = $tempManager;
 	}
 
-	public function getImageUrl(string $key, bool $useSvg = true): string {
+	public function getImageUrl(string $key): string {
 		$cacheBusterCounter = $this->config->getAppValue('nmc_welcome_popup', 'cachebuster', '0');
 		try {
 			return $this->urlGenerator->linkToRoute('nmc_welcome_popup.Slide.getImage', [ 'key' => $key ]) . '?v=' . $cacheBusterCounter;
 		} catch (NotFoundException $e) {
-		}
-
-		switch ($key) {
-			case 'logo':
-			case 'header':
-			case 'favicon':
-				return $this->urlGenerator->imagePath('core', 'logo/logo.png') . '?v=' . $cacheBusterCounter;
-			case 'background':
-				return $this->urlGenerator->imagePath('core', 'background.png') . '?v=' . $cacheBusterCounter;
 		}
 	}
 
@@ -104,28 +95,12 @@ class ImageManager {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-	public function getImage(string $key, bool $useSvg = true): ISimpleFile {
-		$this->logger->info('Image Name: ' . $key);
+	public function getImage(string $key): ISimpleFile {
+		//$this->logger->info('Image Name: ' . $key);
+		$img = $this->config->getAppValue('nmc_welcome_popup', $key . 'Mime', '');
 		$folder = $this->appData->getFolder('images');
 		if ($img === '' || !$folder->fileExists($key)) {
 			throw new NotFoundException();
-		}
-		if (!$useSvg && $this->shouldReplaceIcons()) {
-			if (!$folder->fileExists($key . '.png')) {
-				try {
-					$finalIconFile = new \Imagick();
-					$finalIconFile->setBackgroundColor('none');
-					$finalIconFile->readImageBlob($folder->getFile($key)->getContent());
-					$finalIconFile->setImageFormat('png32');
-					$pngFile = $folder->newFile($key . '.png');
-					$pngFile->putContent($finalIconFile->getImageBlob());
-					return $pngFile;
-				} catch (\ImagickException $e) {
-					$this->logger->info('The image was requested to be no SVG file, but converting it to PNG failed: ' . $e->getMessage());
-				}
-			} else {
-				return $folder->getFile($key . '.png');
-			}
 		}
 		return $folder->getFile($key);
 	}

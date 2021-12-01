@@ -115,21 +115,19 @@ window.addEventListener('DOMContentLoaded', function () {
 		var en_primaryBtnLbl = $('#en-primary-button-label').val();
 		var en_primaryBtnUrl = $('#en-primary-button-url').val();
 		var en_secondaryBtnDesc = $('#en-secondary-button-desc').val();
-		var en_displayPbty = $('#en-display-probability').val();
 		var en_text = $('#en-text').val();
 		
 		var du_title = $('#du-slide-title').val();
 		var du_primaryBtnLbl = $('#du-primary-button-label').val();
 		var du_primaryBtnUrl = $('#du-primary-button-url').val();
 		var du_secondaryBtnDesc = $('#du-secondary-button-desc').val();
-		var du_displayPbty = $('#du-display-probability').val();
 		var du_text = $('#du-text').val();
 
 		var image_name = $('#slide-image').val();
 
 		startLoading();
 		$.post(
-			OC.generateUrl('/apps/nmc_welcome_popup/ajax/addSlide'), {'slide': {'en_GB' : {'title' : en_title, 'primary_button_label' : en_primaryBtnLbl, 'primary_button_url' : en_primaryBtnUrl, 'secondary_button_desc' : en_secondaryBtnDesc, 'display_probability' : en_displayPbty, 'content': en_text}, 'de_DE' : {'title' : du_title, 'primary_button_label' : du_primaryBtnLbl, 'primary_button_url' : du_primaryBtnUrl, 'secondary_button_desc' : du_secondaryBtnDesc, 'display_probability' : du_displayPbty, 'content': du_text},'image_uploaded' : image_name}}
+			OC.generateUrl('/apps/nmc_welcome_popup/ajax/addSlide'), {'slide': {'en_GB' : {'title' : en_title, 'primary_button_label' : en_primaryBtnLbl, 'primary_button_url' : en_primaryBtnUrl, 'secondary_button_desc' : en_secondaryBtnDesc, 'content': en_text}, 'de_DE' : {'title' : du_title, 'primary_button_label' : du_primaryBtnLbl, 'primary_button_url' : du_primaryBtnUrl, 'secondary_button_desc' : du_secondaryBtnDesc, 'content': du_text},'image_uploaded' : image_name}}
 		).done(function(response) {
 			OC.msg.finishedSaving('#welcome_settings_msg', response);
 			$('#welcome_settings_loading').hide();
