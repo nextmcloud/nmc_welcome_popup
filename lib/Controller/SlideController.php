@@ -34,23 +34,26 @@ use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\AppFramework\Http\FileDisplayResponse;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 
 use OCA\NMC_Welcome_Popup\SlideManager;
 use OCA\NMC_Welcome_Popup\ImageManager;
+use OCA\NMC_Welcome_Popup\Settings\Admin;
 
 class SlideController extends Controller {
 
 	/** @var IConfig */
 	protected $config;
 
-	/** @var string */
-	protected $userId;
-
 	/** @var SlideManager */
 	protected $slideManager;
 
 	/** @var ImageManager */
 	private $imageManager;
+
+	/** @var Admin */
+	private $admin;
 
 	/** @var array|false|string[] */
 	protected $slides = [];
@@ -71,35 +74,36 @@ class SlideController extends Controller {
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param IConfig $config
-	 * @param string $userId
-	 * @param SCSSCacher $scssCacher
+	 * @param SlideManager $slideManager
 	 * @param ImageManager $imageManager
+	 * @param Admin $admin
+	 * @param SCSSCacher $scssCacher
 	 * @param IL10N $l
 	 * @param IURLGenerator $urlGenerator
 	 */
 	public function __construct($appName,
 								IRequest $request,
 								IConfig $config,
-								$userId,
 								SlideManager $slideManager,
-								SCSSCacher $scssCacher,
 								ImageManager $imageManager,
+								Admin $admin,
+								SCSSCacher $scssCacher,
 								IL10N $l,
 								ILogger $logger,
 								IURLGenerator $urlGenerator) {
 		parent::__construct($appName, $request);
 
 		$this->config = $config;
-		$this->userId = $userId;
 		$this->slideManager = $slideManager;
 		$this->imageManager = $imageManager;
+		$this->admin = $admin;
 		$this->scssCacher = $scssCacher;
 		$this->l10n = $l;
 		$this->logger = $logger;
 		$this->urlGenerator = $urlGenerator;
 	}
 
-	public function addSlide($slide) {
+	public function addSlide($slideId, $slide) {
 		//$this->logger->debug('Slide: ' . print_r($slide, true));
 		foreach ($slide as $section => $field) {
 			if (is_array($field)) {
@@ -110,7 +114,7 @@ class SlideController extends Controller {
 		}
 		$error = null;
 		$en = 'en_GB';
-		$du = 'de_DE';
+		$de = 'de_DE';
 		if ($slide[$en]['title'] == '') {
 			$error = 'No Title';
 		} elseif ($slide[$en]['primary_button_label'] == '') {
@@ -123,15 +127,15 @@ class SlideController extends Controller {
 			$error = 'No Text given';
 		}
 		
-		if ($slide[$du]['title'] == '') {
+		if ($slide[$de]['title'] == '') {
 			$error = 'Kein Titel';
-		} elseif ($slide[$du]['primary_button_label'] == '') {
+		} elseif ($slide[$de]['primary_button_label'] == '') {
 			$error = 'Keine primäre Schaltflächenbeschriftung';
-		} elseif ($slide[$du]['primary_button_url'] == '') {
+		} elseif ($slide[$de]['primary_button_url'] == '') {
 			$error = 'Keine primäre button url';
-		} elseif ($slide[$du]['secondary_button_desc'] == '') {
+		} elseif ($slide[$de]['secondary_button_desc'] == '') {
 			$error = 'Keine Beschreibung der sekundären Schaltfläche angegeben';
-		} elseif ($slide[$du]['content'] == '') {
+		} elseif ($slide[$de]['content'] == '') {
 			$error = 'Kein Text angegeben';
 		}
 		
@@ -144,7 +148,7 @@ class SlideController extends Controller {
 			], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->slideManager->addSlide($slide);
+		$this->slideManager->addSlide($slideId, $slide);
 
 		// reprocess server scss for preview
 		$cssCached = $this->scssCacher->process(\OC::$SERVERROOT, 'core/css/css-variables.scss', 'core');
@@ -159,6 +163,15 @@ class SlideController extends Controller {
 				'status' => 'success'
 			]
 		);
+	}
+
+	/**
+	 * @param $slideId
+	 * @return array
+	 */
+	public function getSlide($slideId) {
+		$params = $this->slideManager->getSlidesToDisplay($slideId);
+		return $params;
 	}
 
 	/**
@@ -264,36 +277,42 @@ class SlideController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * @param string $key
+	 * @param int $slideId
 	 * @return DataResponse
 	 */
-	public function deleteImage(string $key) {
+	public function deleteImage(string $key, int $slideId) {
 		try {
 			$this->imageManager->delete($key);
-			$this->config->deleteAppValue($this->appName, $key . 'Mime');
-			$slide = $this->slideManager->getSlidesToDisplay();
-			if (is_array($slide) && !empty($slide)) {
-				$slide['image_uploaded'] = "";
-				$this->slideManager->addSlide($slide);
-			}
+			$this->deleteImageParams($key, $slideId);
 		} catch (NotFoundException $e) {
+			$this->deleteImageParams($key, $slideId);
 			return new DataResponse(
 				[
 					'data' => [
-						'message' => $e->getMessage()
+						'message' => $this->l10n->t('Not Found'),
 					],
-					'status' => 'failure',
-				],
-				Http::STATUS_NOT_FOUND
+					'status' => 'not found',
+				]
 			);
 		} catch (NotPermittedException $e) {
 			return new DataResponse(
 				[
 					'data' => [
-						'message' => $e->getMessage()
+						'message' => $e->getCode()
 					],
-					'status' => 'failure',
+					'status' => 'failure - not permitted',
 				],
 				Http::STATUS_CONFLICT
+			);
+		} catch (\InvalidArgumentException | \Exception $e) {
+			return new DataResponse(
+				[
+					'data' => [
+						'message' => $e->getCode()
+					],
+					'status' => 'failure - unknown exception',
+				],
+				Http::STATUS_INTERNAL_SERVER_ERROR
 			);
 		}
 
@@ -306,5 +325,21 @@ class SlideController extends Controller {
 				'status' => 'success'
 			]
 		);
+	}
+
+	/**
+	 *
+	 * @param string $key
+	 * @param int $slideId
+	 * @return array[]
+	 */
+	private function deleteImageParams(string $key, int $slideId) {
+		$this->config->deleteAppValue($this->appName, $key . 'Mime');
+		$slide = $this->slideManager->getSlidesToDisplay($slideId);
+		if (is_array($slide) && !empty($slide)) {
+			$slide['image_uploaded'] = "";
+			$slide = $this->slideManager->addSlide($slideId, $slide);
+		}
+		return $slide;
 	}
 }

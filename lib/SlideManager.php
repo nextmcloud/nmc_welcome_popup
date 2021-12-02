@@ -21,82 +21,32 @@
 
 namespace OCA\NMC_Welcome_Popup;
 
-use OCP\App\IAppManager;
-use OCP\Files\IAppData;
-use OCP\Files\NotFoundException;
-use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IConfig;
-use OCP\IGroupManager;
-use OCP\IRequest;
-use OCP\IUser;
-use OCP\IUserSession;
-use OCP\L10N\IFactory;
+use OCP\IURLGenerator;
 
 class SlideManager {
-
-	const TYPE_LINK = 'link';
-	const TYPE_SETTING = 'settings';
-	const TYPE_LOGIN = 'guest';
-	const TYPE_QUOTA = 'quota';
-
-	const DEVICE_ALL = '';
-	const DEVICE_ANDROID = 'android';
-	const DEVICE_IOS = 'ios';
-	const DEVICE_DESKTOP = 'desktop';
-	const DEVICE_BROWSER = 'browser';
-
-	/** @var IRequest */
-	protected $request;
 
 	/** @var IConfig */
 	protected $config;
 
-	/** @var IFactory */
-	protected $languageFactory;
+	/** @var IURLGenerator */
+	private $urlGenerator;
 
-	/** @var IAppManager */
-	protected $appManager;
-
-	/** @var IGroupManager */
-	protected $groupManager;
-
-	/** @var IUserSession */
-	protected $userSession;
-
-	/** @var IAppData */
-	protected $appData;
-
-	/** @var ImageManager */
-	private $imageManager;
-
-
-	public function __construct(IRequest $request,
-								IConfig $config,
-								IAppManager $appManager,
-								IGroupManager $groupManager,
-								IUserSession $userSession,
-								IFactory $languageFactory,
-								ImageManager $imageManager,
-								IAppData $appData) {
-		$this->request = $request;
+	public function __construct(IConfig $config,
+								IURLGenerator $urlGenerator) {
 		$this->config = $config;
-		$this->appManager = $appManager;
-		$this->groupManager = $groupManager;
-		$this->userSession = $userSession;
-		$this->languageFactory = $languageFactory;
-		$this->imageManager = $imageManager;
-		$this->appData = $appData;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
 	 * @return array[]
 	 */
-	public function getSlidesToDisplay() {
+	public function getSlidesToDisplay($slideId) {
 		$slides = $this->getSlides();
 
 		$langSlides = [];
-		foreach ($slides as $id => $langSlide) {
-			$langSlides = $langSlide;
+		if (isset($slides[$slideId])) {
+			$langSlides = $slides[$slideId];
 		}
 
 		return $langSlides;
@@ -116,17 +66,16 @@ class SlideManager {
 	}
 
 	/**
+	 * @param int $slideId
 	 * @param array $slide
 	 * @return array
-	 * @throws InvalidIDException
 	 */
-	public function addSlide($slide) {
-		$slideNo = 1;
-
-		$slides[$slideNo] = $slide;
+	public function addSlide($slideId, $slide) {
+		$slides = $this->getSlides();
+		$slides[$slideId] = $slide;
 		$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', json_encode($slides));
 
-		return $slides[$slideNo];
+		return $slides[$slideId];
 	}
 
 }
