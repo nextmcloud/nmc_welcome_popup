@@ -59,7 +59,7 @@ class Section implements IIconSection {
 	 * @return string
 	 */
 	public function getName() {
-		return $this->l->t('Welcome pop-up');
+		return $this->l->t('Welcome Pop-up');
 	}
 
 	/**
@@ -77,6 +77,6 @@ class Section implements IIconSection {
 	 * {@inheritdoc}
 	 */
 	public function getIcon() {
-		return $this->url->imagePath('nmc_welcome_popup', 'pop-up_window.svg');
+		return $this->url->imagePath('nmc_welcome_popup', 'content-news.svg');
 	}
 }
