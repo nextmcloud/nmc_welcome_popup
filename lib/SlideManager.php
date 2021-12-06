@@ -26,42 +26,14 @@ use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IConfig;
-use OCP\IGroupManager;
-use OCP\IRequest;
-use OCP\IUser;
-use OCP\IUserSession;
-use OCP\L10N\IFactory;
 
 class SlideManager {
-
-	const TYPE_LINK = 'link';
-	const TYPE_SETTING = 'settings';
-	const TYPE_LOGIN = 'guest';
-	const TYPE_QUOTA = 'quota';
-
-	const DEVICE_ALL = '';
-	const DEVICE_ANDROID = 'android';
-	const DEVICE_IOS = 'ios';
-	const DEVICE_DESKTOP = 'desktop';
-	const DEVICE_BROWSER = 'browser';
-
-	/** @var IRequest */
-	protected $request;
 
 	/** @var IConfig */
 	protected $config;
 
-	/** @var IFactory */
-	protected $languageFactory;
-
 	/** @var IAppManager */
 	protected $appManager;
-
-	/** @var IGroupManager */
-	protected $groupManager;
-
-	/** @var IUserSession */
-	protected $userSession;
 
 	/** @var IAppData */
 	protected $appData;
@@ -70,20 +42,12 @@ class SlideManager {
 	private $imageManager;
 
 
-	public function __construct(IRequest $request,
-								IConfig $config,
+	public function __construct(IConfig $config,
 								IAppManager $appManager,
-								IGroupManager $groupManager,
-								IUserSession $userSession,
-								IFactory $languageFactory,
 								ImageManager $imageManager,
 								IAppData $appData) {
-		$this->request = $request;
 		$this->config = $config;
 		$this->appManager = $appManager;
-		$this->groupManager = $groupManager;
-		$this->userSession = $userSession;
-		$this->languageFactory = $languageFactory;
 		$this->imageManager = $imageManager;
 		$this->appData = $appData;
 	}

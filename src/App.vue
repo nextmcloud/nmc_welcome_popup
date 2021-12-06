@@ -400,9 +400,10 @@ export default {
 
 			try {
 				const response = await axios.get(generateUrl('/apps/nmc_welcome_popup/wizard'))
+				this.slides = this.slides.slice(0, 1)
 				this.slides.push(...response.data.slides)
 				this.withIntro = response.data.hasVideo
-				this.slidesLoaded = true
+				// this.slidesLoaded = true
 			} catch (e) {
 				console.error('Failed to load slides')
 			}
@@ -410,6 +411,13 @@ export default {
 		async open(withIntro = true) {
 			await this.loadStaticSlides()
 			this.withIntro = this.withIntro & withIntro
+			this.showModal = true
+			this.currentSlide = 0
+		},
+		previewSlide(slide = []) {
+			this.slides = this.slides.slice(0, 1)
+			this.slides.push(...slide)
+			this.withIntro = false
 			this.showModal = true
 			this.currentSlide = 0
 		},

@@ -79,17 +79,6 @@
         margin: 10px;
     }
 
-    #welcome_settings_loading {
-        display: inline-block;
-        vertical-align: middle;
-        margin-right: 10px;
-    }
-
-    #welcome_settings_msg {
-        vertical-align: middle;
-        border-radius: 3px;
-    }
-
     #welcome-preview {
         #welcome-preview-logo {
             width: 100%;
@@ -125,4 +114,15 @@
     svg, img {
         transition: 500ms filter linear;
     }
+}
+
+#welcome_settings_loading, #welcome_img_loading {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+#welcome_settings_msg, #welcome_img_loaded_msg {
+    vertical-align: middle;
+    border-radius: 3px;
 }

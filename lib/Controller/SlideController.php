@@ -34,6 +34,8 @@ use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\AppFramework\Http\FileDisplayResponse;
+use OCP\AppFramework\Http\NotFoundResponse;
+use OCP\Files\NotFoundException;
 
 use OCA\NMC_Welcome_Popup\SlideManager;
 use OCA\NMC_Welcome_Popup\ImageManager;
@@ -55,8 +57,8 @@ class SlideController extends Controller {
 	/** @var array|false|string[] */
 	protected $slides = [];
 
+	/** @var SCSSCacher */
 	private $scssCacher;
-	/** @var IURLGenerator */
 
 	/** @var IL10N */
 	private $l10n;
@@ -145,6 +147,7 @@ class SlideController extends Controller {
 		}
 
 		$this->slideManager->addSlide($slide);
+		$this->config->deleteAppFromAllUsers($this->appName);
 
 		// reprocess server scss for preview
 		$cssCached = $this->scssCacher->process(\OC::$SERVERROOT, 'core/css/css-variables.scss', 'core');

@@ -18,10 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
+var imgUrl;
 
 function startLoading() {
 	OC.msg.startSaving('#welcome_settings_msg');
 	$('#welcome_settings_loading').show();
+}
+
+function startLoadingImg() {
+	OC.msg.startSaving('#welcome_img_loaded_msg');
+	$('#welcome_img_loading').show();
 }
 
 window.addEventListener('DOMContentLoaded', function () {
@@ -36,20 +42,20 @@ window.addEventListener('DOMContentLoaded', function () {
 	$('#remove-img').click(function (e) {
 		var image_name = $('#slide-image').val();
 
-		startLoading();
+		startLoadingImg();
 		$.ajax({
 			type: "DELETE",
 			url: OC.generateUrl('/apps/nmc_welcome_popup/image/' + image_name),
 			data: {'image_uploaded' : image_name}
 		}).done(function(response) {
-			OC.msg.finishedSaving('#welcome_settings_msg', response);
-			$('#welcome_settings_loading').hide();
+			OC.msg.finishedSaving('#welcome_img_loaded_msg', response);
+			$('#welcome_img_loading').hide();
 			$("#slide-image").val("");
 			$("#en-image-uploaded").text("");
 			$('#remove-img').hide();
 		}).fail(function(response) {
-			OC.msg.finishedError('#welcome_settings_msg', response.responseJSON);
-			$('#welcome_settings_loading').hide();
+			OC.msg.finishedError('#welcome_img_loaded_msg', response.responseJSON);
+			$('#welcome_img_loading').hide();
 		});
 	});
 
@@ -60,24 +66,25 @@ window.addEventListener('DOMContentLoaded', function () {
 			var $form = $(e.target).closest('form');
 			var key = $form.data('image-key');
 
-			OC.msg.finishedSaving('#welcome_settings_msg', response.result);
+			OC.msg.finishedSaving('#welcome_img_loaded_msg', response.result);
 			$form.find('label.button').addClass('icon-upload').removeClass('icon-loading-small');
-			$('#welcome_settings_loading').hide();
+			$('#welcome_img_loading').hide();
 			$("#en-image-uploaded").text(response.result.data.name);
 			$("#slide-image").val(response.result.data.image);
+			imgUrl = response.result.data.url;
 			$('#remove-img').show();
 		},
 		submit: function(e, response) {
 			var $form = $(e.target).closest('form');
 			var key = $form.data('image-key');
-			startLoading();
+			startLoadingImg();
 			$form.find('label.button').removeClass('icon-upload').addClass('icon-loading-small');
 		},
 		fail: function (e, response){
 			var $form = $(e.target).closest('form');
-			OC.msg.finishedError('#welcome_settings_msg', response._response.jqXHR.responseJSON.data.message);
+			OC.msg.finishedError('#welcome_img_loaded_msg', response._response.jqXHR.responseJSON.data.message);
 			$form.find('label.button').addClass('icon-upload').removeClass('icon-loading-small');
-			$('#welcome_settings_loading').hide();
+			$('#welcome_img_loading').hide();
 		}
 	});
 
@@ -111,6 +118,39 @@ window.addEventListener('DOMContentLoaded', function () {
 	});
 	
 	$('#add_new_popup').click(function() {
+		startLoading();
+		$.post(
+			OC.generateUrl('/apps/nmc_welcome_popup/ajax/addSlide'), getParams()
+		).done(function(response) {
+			OC.msg.finishedSaving('#welcome_settings_msg', response);
+			$('#welcome_settings_loading').hide();
+		}).fail(function(response) {
+			OC.msg.finishedSaving('#welcome_settings_msg', response.responseJSON);
+			$('#welcome_settings_loading').hide();
+		});
+	});
+
+	$('.show-preview').click(function(event) {
+		var lang = $(this).data('lang');
+		event.stopPropagation();
+		event.preventDefault();
+		var slide_params = getParams().slide;
+		var image_name = slide_params.image_uploaded;
+		if (!image_name) {
+			imgUrl = "";
+		} else if(!imgUrl) {
+			var cachebusterImg = Math.round(new Date().getTime() / 1000);
+			imgUrl = OC.generateUrl('/apps/nmc_welcome_popup/image/' + image_name) + '?v=' + cachebusterImg;
+		}
+		var langSlide = slide_params[lang];
+		langSlide.image_url = imgUrl;
+		OCP.Loader.loadScript('nmc_welcome_popup', 'nmc_welcome_popup-main.js').then(function () {
+			window.OCA.NMC_Welcome_Popup.previewSlide([langSlide]);
+		});
+		return false;
+	});
+
+	function getParams() {
 		var en_title = $('#en-slide-title').val();
 		var en_primaryBtnLbl = $('#en-primary-button-label').val();
 		var en_primaryBtnUrl = $('#en-primary-button-url').val();
@@ -125,16 +165,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
 		var image_name = $('#slide-image').val();
 
-		startLoading();
-		$.post(
-			OC.generateUrl('/apps/nmc_welcome_popup/ajax/addSlide'), {'slide': {'en_GB' : {'title' : en_title, 'primary_button_label' : en_primaryBtnLbl, 'primary_button_url' : en_primaryBtnUrl, 'secondary_button_desc' : en_secondaryBtnDesc, 'content': en_text}, 'de_DE' : {'title' : du_title, 'primary_button_label' : du_primaryBtnLbl, 'primary_button_url' : du_primaryBtnUrl, 'secondary_button_desc' : du_secondaryBtnDesc, 'content': du_text},'image_uploaded' : image_name}}
-		).done(function(response) {
-			OC.msg.finishedSaving('#welcome_settings_msg', response);
-			$('#welcome_settings_loading').hide();
-		}).fail(function(response) {
-			OC.msg.finishedSaving('#welcome_settings_msg', response.responseJSON);
-			$('#welcome_settings_loading').hide();
-		});
-	});
+		return {'slide': {'en_GB' : {'title' : en_title, 'primary_button_label' : en_primaryBtnLbl, 'primary_button_url' : en_primaryBtnUrl, 'secondary_button_desc' : en_secondaryBtnDesc, 'content': en_text}, 'de_DE' : {'title' : du_title, 'primary_button_label' : du_primaryBtnLbl, 'primary_button_url' : du_primaryBtnUrl, 'secondary_button_desc' : du_secondaryBtnDesc, 'content': du_text},'image_uploaded' : image_name}};
+	}
 
 });

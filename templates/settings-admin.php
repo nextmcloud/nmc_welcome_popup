@@ -47,8 +47,8 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 	<h2 class="inlineblock"><?php p($l->t('Create a new welcome pop-up')); ?></h2>
 	<p class="settings-hint"><?php p($l->t('Slide 1')); ?></p>
 	<div>
-		<div id="welcome_settings_loading" class="icon-loading-small" style="display: none;"></div>
-		<span id="welcome_settings_msg" class="msg success" style="display: none;">Saved</span>
+		<div id="welcome_img_loading" class="icon-loading-small" style="display: none;"></div>
+		<span id="welcome_img_loaded_msg" class="msg success" style="display: none;">Saved</span>
 	</div>
 	<p>
 		<?php p($_['errorMessage']) ?>
@@ -95,18 +95,16 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 	<div>
 		<label>
 			<div>Text</div>
-			<textarea id="du-text" placeholder="HTML interpretierender Text für das Pop-up" rows="16" cols="48" maxlength="500"><?php p($_[$du]['content']) ?></textarea>
+			<textarea id="du-text" placeholder="HTML interpretierender Text für das Pop-up" rows="16" cols="48" maxlength="1000"><?php p($_[$du]['content']) ?></textarea>
 		</label>
+	</div>
+	<div>
+		<input type="button" id="du-show-preview" class="show-preview" data-lang="<?php p($du) ?>" value="Vorschau" style="width: auto;" />
 	</div>
 </div>
 </div>
 <div id="welcome_popup" class="section section-english" style="display: inline-block">
 	<h2 class="inlineblock"></h2>
-	<p class="settings-hint"></p>
-	<div>
-		<div id="welcome_settings_loading" class="icon-loading-small" style="display: none;"></div>
-		<span id="welcome_settings_msg" class="msg success" style="display: none;">Saved</span>
-	</div>
 	<h3 class="inlineblock">English</h3>
 	<div>
 		<label>
@@ -117,7 +115,7 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 	<h4 class="inlineblock"></h4>
 	<div>
 		<label>
-			<div><?php p($l->t('Buttons')) ?></div>
+			<div>Buttons</div>
 			<input id="en-primary-button-label" type="text" placeholder="Primary button label" value="<?php p($_[$en]['primary_button_label']) ?>" maxlength="250" />
 		</label>
 	</div>
@@ -133,9 +131,12 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 	<h4 class="inlineblock"></h4>
 	<div>
 		<label>
-			<div><?php p($l->t('Text')) ?></div>
-			<textarea id="en-text" placeholder="HTML interpreting text for the pop-up" rows="16" cols="48" maxlength="500"><?php p($_[$en]['content']) ?></textarea>
+			<div>Text</div>
+			<textarea id="en-text" placeholder="HTML interpreting text for the pop-up" rows="16" cols="48" maxlength="1000"><?php p($_[$en]['content']) ?></textarea>
 		</label>
+	</div>
+	<div>
+		<input type="button" id="en-show-preview" class="show-preview" data-lang="<?php p($en) ?>" value="Preview" style="width: auto;" />
 	</div>
 </div>
 </div>
@@ -143,5 +144,9 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 	<h4 class="inlineblock"></h4>
 	<div>
 		<input type="button" id="add_new_popup" value="<?php p($l->t('Save pop-up')); ?>" />
+	</div>
+	<div>
+		<div id="welcome_settings_loading" class="icon-loading-small" style="display: none;"></div>
+		<span id="welcome_settings_msg" class="msg success" style="display: none;">Saved</span>
 	</div>
 </div>

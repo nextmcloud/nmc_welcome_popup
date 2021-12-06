@@ -38,10 +38,8 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Files\SimpleFS\ISimpleFolder;
-use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\ILogger;
-use OCP\ITempManager;
 use OCP\IURLGenerator;
 
 class ImageManager {
@@ -54,26 +52,18 @@ class ImageManager {
 	private $urlGenerator;
 	/** @var array */
 	private $supportedImageKeys = ['background', 'logo', 'logoheader', 'favicon', 'welcome_image'];
-	/** @var ICacheFactory */
-	private $cacheFactory;
 	/** @var ILogger */
 	private $logger;
-	/** @var ITempManager */
-	private $tempManager;
 
 	public function __construct(IConfig $config,
 								IAppData $appData,
 								IURLGenerator $urlGenerator,
-								ICacheFactory $cacheFactory,
-								ILogger $logger,
-								ITempManager $tempManager
+								ILogger $logger
 	) {
 		$this->config = $config;
 		$this->appData = $appData;
 		$this->urlGenerator = $urlGenerator;
-		$this->cacheFactory = $cacheFactory;
 		$this->logger = $logger;
-		$this->tempManager = $tempManager;
 	}
 
 	public function getImageUrl(string $key): string {

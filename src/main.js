@@ -20,4 +20,5 @@ const vm = new View().$mount(el)
 
 window.OCA.NMC_Welcome_Popup = {
 	open: vm.open,
+	previewSlide: vm.previewSlide
 }
