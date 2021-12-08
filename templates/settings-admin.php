@@ -143,10 +143,11 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 <div class="section" style="padding-top: 0px;">
 	<h4 class="inlineblock"></h4>
 	<div>
-		<input type="button" id="add_new_popup" value="<?php p($l->t('Save pop-up')); ?>" />
-	</div>
-	<div>
 		<div id="welcome_settings_loading" class="icon-loading-small" style="display: none;"></div>
 		<span id="welcome_settings_msg" class="msg success" style="display: none;">Saved</span>
+	</div>
+	<h4 class="inlineblock"></h4>
+	<div>
+		<input type="button" id="add_new_popup" value="<?php p($l->t('Save pop-up')); ?>" />
 	</div>
 </div>
