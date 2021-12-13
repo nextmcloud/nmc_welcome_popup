@@ -37,14 +37,19 @@ use OCP\Settings\ISettings;
 use OCP\ILogger;
 
 class Admin implements ISettings {
+
 	/** @var IConfig */
 	private $config;
+
 	/** @var IL10N */
 	private $l;
+
 	/** @var SlideManager */
 	protected $slideManager;
+
 	/** @var IURLGenerator */
 	private $urlGenerator;
+
 	/** @var ILogger */
 	protected $logger;
 
@@ -65,7 +70,19 @@ class Admin implements ISettings {
 	 */
 	public function getForm(): TemplateResponse {
 		$errorMessage = '';
-		$parameters = $this->slideManager->getSlidesToDisplay();
+		$parameters = [];
+		$slideIds = explode(',', $this->config->getAppValue('nmc_welcome_popup', 'slideIds', '1'));
+		$slides = $this->slideManager->getSlides();
+		if (empty($slides)) {
+			$slideIds = [1];
+		} else {
+			$slideIds = array_keys($slides);
+		}
+		$this->config->setAppValue('nmc_welcome_popup', 'slideIds', implode(',', $slideIds));
+		if (isset($slides[$slideIds[0]])) {
+			$parameters = $slides[$slideIds[0]];
+		}
+		$parameters['slide_ids'] = $slideIds;
 		$parameters['uploadImageRoute'] = $this->urlGenerator->linkToRoute('nmc_welcome_popup.Slide.uploadImage');
 		$parameters['errorMessage'] = $errorMessage;
 

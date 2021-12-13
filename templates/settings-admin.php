@@ -26,15 +26,15 @@ script('nmc_welcome_popup', 'settings-admin');
 style('nmc_welcome_popup', 'settings-admin');
 
 $en = 'en_GB';
-$du = 'de_DE';
+$de = 'de_DE';
 
 $_['image_uploaded'] = isset($_['image_uploaded']) ? $_['image_uploaded'] : "";
 
-$_[$du]['title'] = isset($_[$du]['title']) ? $_[$du]['title'] : "";
-$_[$du]['primary_button_label'] = isset($_[$du]['primary_button_label']) ? $_[$du]['primary_button_label'] : "";
-$_[$du]['primary_button_url'] = isset($_[$du]['primary_button_url']) ? $_[$du]['primary_button_url'] : "";
-$_[$du]['secondary_button_desc'] = isset($_[$du]['secondary_button_desc']) ? $_[$du]['secondary_button_desc'] : "";
-$_[$du]['content'] = isset($_[$du]['content']) ? $_[$du]['content'] : "";
+$_[$de]['title'] = isset($_[$de]['title']) ? $_[$de]['title'] : "";
+$_[$de]['primary_button_label'] = isset($_[$de]['primary_button_label']) ? $_[$de]['primary_button_label'] : "";
+$_[$de]['primary_button_url'] = isset($_[$de]['primary_button_url']) ? $_[$de]['primary_button_url'] : "";
+$_[$de]['secondary_button_desc'] = isset($_[$de]['secondary_button_desc']) ? $_[$de]['secondary_button_desc'] : "";
+$_[$de]['content'] = isset($_[$de]['content']) ? $_[$de]['content'] : "";
 
 $_[$en]['title'] = isset($_[$en]['title']) ? $_[$en]['title'] : "";
 $_[$en]['primary_button_label'] = isset($_[$en]['primary_button_label']) ? $_[$en]['primary_button_label'] : "";
@@ -42,10 +42,20 @@ $_[$en]['primary_button_url'] = isset($_[$en]['primary_button_url']) ? $_[$en]['
 $_[$en]['secondary_button_desc'] = isset($_[$en]['secondary_button_desc']) ? $_[$en]['secondary_button_desc'] : "";
 $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 
+$_['slide_ids'] = (isset($_['slide_ids']) && is_array($_['slide_ids'])) ? $_['slide_ids'] : [1];
+$length = count($_['slide_ids']);
+
 ?>
 <div id="welcome_popup" class="section">
 	<h2 class="inlineblock"><?php p($l->t('Create a new welcome pop-up')); ?></h2>
-	<p class="settings-hint"><?php p($l->t('Slide 1')); ?></p>
+	<ul class="slide-list settings-hint">
+		<?php for ($id = 0; $id < $length; $id++) { ?>
+		<li data-id="<?php p($_['slide_ids'][$id]); ?>">
+			<a href="#">Slide <?php p($id + 1); ?></a>
+		</li>
+		<?php } ?>
+		<li class="add-slide"><a href="#" class="button"><span class="icon-add"></span></a></li>
+	</ul>
 	<div>
 		<div id="welcome_img_loading" class="icon-loading-small" style="display: none;"></div>
 		<span id="welcome_img_loaded_msg" class="msg success" style="display: none;">Saved</span>
@@ -56,12 +66,12 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 	<div>
 		<form class="uploadButton" method="post" action="<?php p($_['uploadImageRoute']) ?>" data-image-key="image">
 			<input type="hidden" id="slide-image" value="<?php p($_['image_uploaded']); ?>" />
-			<input type="hidden" name="key" value="welcome_image" />
-			<label for="en-uploadimage"><span style="min-width: 50px;">Image</span></label>
-			<input id="en-uploadimage" class="fileupload" name="image" type="file" />
+			<input type="hidden" name="key" id="image-name" data-key="welcome_image" value="welcome_image_<?php p($_['slide_ids'][0]); ?>" />
+			<label for="uploadimage"><span style="min-width: 50px;">Image</span></label>
+			<input id="uploadimage" class="fileupload" name="image" type="file" />
 			<div class="image-label">
-				<label for="en-uploadimage" class="button icon-upload svg" id="en-uploadimage" title="<?php p($l->t('Header image for the pop-up')) ?>"></label>
-				<label id="en-image-uploaded"></label>
+				<label for="uploadimage" class="button icon-upload svg" id="uploadimage" title="<?php p($l->t('Header image for the pop-up')) ?>"></label>
+				<label id="image-uploaded"></label>
 				<a id="remove-img" class="icon-delete" style="display: none;"></a>
 			</div>
 		</form>
@@ -72,34 +82,34 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 	<div>
 		<label>
 			<div>Titel</div>
-			<input id="du-slide-title" type="text" placeholder="Überschrift für das Pop-up" value="<?php p($_[$du]['title']) ?>" maxlength="250" />
+			<input id="<?php p($de) ?>-slide-title" type="text" data-key="<?php p($de) ?>_title" placeholder="Überschrift für das Pop-up" value="<?php p($_[$de]['title']) ?>" maxlength="250" />
 		</label>
 	</div>
 	<h4 class="inlineblock"></h4>
 	<div>
 		<label>
 			<div>Buttons</div>
-			<input id="du-primary-button-label" type="text" placeholder="Bezeichnung für den primären Button" value="<?php p($_[$du]['primary_button_label']) ?>" maxlength="250" />
+			<input id="<?php p($de) ?>-primary-button-label" type="text" data-key="<?php p($de) ?>_primary_button_label" placeholder="Bezeichnung für den primären Button" value="<?php p($_[$de]['primary_button_label']) ?>" maxlength="250" />
 		</label>
 	</div>
 	<div>
 		<label>
-			<input id="du-primary-button-url" type="url" placeholder="Link für den primären Button" value="<?php p($_[$du]['primary_button_url']) ?>" maxlength="500" />
+			<input id="<?php p($de) ?>-primary-button-url" type="url" data-key="<?php p($de) ?>_primary_button_url" placeholder="Link für den primären Button" value="<?php p($_[$de]['primary_button_url']) ?>" maxlength="500" />
 		</label>
 	<div>
 		<label>
-			<input id="du-secondary-button-desc" type="text" placeholder="Bezeichnung für den sekundären Button zum Schließen" value="<?php p($_[$du]['secondary_button_desc']) ?>" maxlength="500" />
+			<input id="<?php p($de) ?>-secondary-button-desc" type="text" data-key="<?php p($de) ?>_secondary_button_desc" placeholder="Bezeichnung für den sekundären Button zum Schließen" value="<?php p($_[$de]['secondary_button_desc']) ?>" maxlength="500" />
 		</label>
 	</div>
 	<h4 class="inlineblock"></h4>
 	<div>
 		<label>
 			<div>Text</div>
-			<textarea id="du-text" placeholder="HTML interpretierender Text für das Pop-up" rows="16" cols="48" maxlength="1000"><?php p($_[$du]['content']) ?></textarea>
+			<textarea id="<?php p($de) ?>-text" data-key="<?php p($de) ?>_content" placeholder="HTML interpretierender Text für das Pop-up" rows="16" cols="48" maxlength="1000"><?php p($_[$de]['content']) ?></textarea>
 		</label>
 	</div>
 	<div>
-		<input type="button" id="du-show-preview" class="show-preview" data-lang="<?php p($du) ?>" value="Vorschau" style="width: auto;" />
+		<input type="button" id="<?php p($de) ?>-show-preview" class="show-preview" data-lang="<?php p($de) ?>" value="Vorschau" style="width: auto;" />
 	</div>
 </div>
 </div>
@@ -109,38 +119,46 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 	<div>
 		<label>
 			<div>Title</div>
-			<input id="en-slide-title" type="text" placeholder="Headline for the pop-up" value="<?php p($_[$en]['title']) ?>" maxlength="250" />
+			<input id="<?php p($en) ?>-slide-title" type="text" data-key="<?php p($en) ?>_title" placeholder="Headline for the pop-up" value="<?php p($_[$en]['title']) ?>" maxlength="250" />
 		</label>
 	</div>
 	<h4 class="inlineblock"></h4>
 	<div>
 		<label>
 			<div>Buttons</div>
-			<input id="en-primary-button-label" type="text" placeholder="Primary button label" value="<?php p($_[$en]['primary_button_label']) ?>" maxlength="250" />
+			<input id="<?php p($en) ?>-primary-button-label" type="text" data-key="<?php p($en) ?>_primary_button_label" placeholder="Primary button label" value="<?php p($_[$en]['primary_button_label']) ?>" maxlength="250" />
 		</label>
 	</div>
 	<div>
 		<label>
-			<input id="en-primary-button-url" type="url" placeholder="URL for primary button" value="<?php p($_[$en]['primary_button_url']) ?>" maxlength="500" />
+			<input id="<?php p($en) ?>-primary-button-url" type="url" data-key="<?php p($en) ?>_primary_button_url" placeholder="URL for primary button" value="<?php p($_[$en]['primary_button_url']) ?>" maxlength="500" />
 		</label>
 	<div>
 		<label>
-			<input id="en-secondary-button-desc" type="text" placeholder="Secondary button description to close the pop-up" value="<?php p($_[$en]['secondary_button_desc']) ?>" maxlength="500" />
+			<input id="<?php p($en) ?>-secondary-button-desc" type="text" data-key="<?php p($en) ?>_secondary_button_desc" placeholder="Secondary button description to close the pop-up" value="<?php p($_[$en]['secondary_button_desc']) ?>" maxlength="500" />
 		</label>
 	</div>
 	<h4 class="inlineblock"></h4>
 	<div>
 		<label>
 			<div>Text</div>
-			<textarea id="en-text" placeholder="HTML interpreting text for the pop-up" rows="16" cols="48" maxlength="1000"><?php p($_[$en]['content']) ?></textarea>
+			<textarea id="<?php p($en) ?>-text" data-key="<?php p($en) ?>_content" placeholder="HTML interpreting text for the pop-up" rows="16" cols="48" maxlength="1000"><?php p($_[$en]['content']) ?></textarea>
 		</label>
 	</div>
 	<div>
-		<input type="button" id="en-show-preview" class="show-preview" data-lang="<?php p($en) ?>" value="Preview" style="width: auto;" />
+		<input type="button" id="<?php p($en) ?>-show-preview" class="show-preview" data-lang="<?php p($en) ?>" value="Preview" style="width: auto;" />
 	</div>
 </div>
 </div>
 <div class="section" style="padding-top: 0px;">
+	<h4 class="inlineblock"></h4>
+	<div>
+		<span id="remove_slide_msg" class="msg success" style="display: none;">Saved</span>
+	</div>
+	<h4 class="inlineblock"></h4>
+	<div>
+		<input type="button" id="remove_slide" value="<?php p($l->t('Remove slide')); ?>" />
+	</div>
 	<h4 class="inlineblock"></h4>
 	<div>
 		<div id="welcome_settings_loading" class="icon-loading-small" style="display: none;"></div>

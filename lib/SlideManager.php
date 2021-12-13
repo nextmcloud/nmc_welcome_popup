@@ -21,46 +21,32 @@
 
 namespace OCA\NMC_Welcome_Popup;
 
-use OCP\App\IAppManager;
-use OCP\Files\IAppData;
-use OCP\Files\NotFoundException;
-use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IConfig;
+use OCP\IURLGenerator;
 
 class SlideManager {
 
 	/** @var IConfig */
 	protected $config;
 
-	/** @var IAppManager */
-	protected $appManager;
-
-	/** @var IAppData */
-	protected $appData;
-
-	/** @var ImageManager */
-	private $imageManager;
-
+	/** @var IURLGenerator */
+	private $urlGenerator;
 
 	public function __construct(IConfig $config,
-								IAppManager $appManager,
-								ImageManager $imageManager,
-								IAppData $appData) {
+								IURLGenerator $urlGenerator) {
 		$this->config = $config;
-		$this->appManager = $appManager;
-		$this->imageManager = $imageManager;
-		$this->appData = $appData;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
 	 * @return array[]
 	 */
-	public function getSlidesToDisplay() {
+	public function getSlidesToDisplay($slideId) {
 		$slides = $this->getSlides();
 
 		$langSlides = [];
-		foreach ($slides as $id => $langSlide) {
-			$langSlides = $langSlide;
+		if (isset($slides[$slideId])) {
+			$langSlides = $slides[$slideId];
 		}
 
 		return $langSlides;
@@ -80,17 +66,36 @@ class SlideManager {
 	}
 
 	/**
+	 * @param int $slideId
 	 * @param array $slide
 	 * @return array
-	 * @throws InvalidIDException
 	 */
-	public function addSlide($slide) {
-		$slideNo = 1;
-
-		$slides[$slideNo] = $slide;
+	public function addSlide($slideId, $slide) {
+		$slides = $this->getSlides();
+		$slides[$slideId] = $slide;
 		$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', json_encode($slides));
 
-		return $slides[$slideNo];
+		return $slides[$slideId];
+	}
+
+	/**
+	 * @param int $slideId
+	 * @return array
+	 */
+	public function removeSlide($slideId) {
+		$slides = $this->getSlides();
+		if (isset($slides[$slideId])) {
+			$slide = $slides[$slideId];
+			unset($slides[$slideId]);
+		} else {
+			$slide = [];
+		}
+		if (empty($slide)) {
+			$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', '');
+		} else {
+			$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', json_encode($slides));
+		}
+		return $slide;
 	}
 
 }

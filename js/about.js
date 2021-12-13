@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			event.stopPropagation();
 			event.preventDefault();
 			OCP.Loader.loadScript('nmc_welcome_popup', 'nmc_welcome_popup-main.js').then(function () {
-				OCA.NMC_Welcome_Popup.open();
+				OCA.NMC_Welcome_Popup.Modal.open();
 				OC.hideMenus(function () {
 					return false;
 				});

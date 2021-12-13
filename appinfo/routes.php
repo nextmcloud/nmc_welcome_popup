@@ -23,9 +23,11 @@ return [
 	'routes' => [
 		['name' => 'Wizard#show', 'url' => '/wizard', 'verb' => 'GET'],
 		['name' => 'Wizard#disable', 'url' => '/wizard', 'verb' => 'DELETE'],
-		['name' => 'Slide#addSlide', 'url' => '/ajax/addSlide', 'verb' => 'POST'],
+		['name' => 'Slide#addSlide', 'url' => '/ajax/slideSettings/{slideId}', 'verb' => 'POST', 'defaults' => ['slideId' => '1']],
 		['name' => 'Slide#getImage', 'url' => '/image/{key}', 'verb' => 'GET'],
 		['name' => 'Slide#uploadImage', 'url' => '/ajax/uploadImage', 'verb' => 'POST'],
 		['name' => 'Slide#deleteImage', 'url' => '/image/{key}', 'verb' => 'DELETE'],
+		['name' => 'Slide#getSlide', 'url' => '/ajax/slideSettings/{slideId}', 'verb' => 'GET', 'defaults' => ['slideId' => '1']],
+		['name' => 'Slide#removeSlide', 'url' => '/ajax/slideSettings/{slideId}', 'verb' => 'DELETE', 'defaults' => ['slideId' => '1']],
 	],
 ];
