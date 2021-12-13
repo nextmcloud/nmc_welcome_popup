@@ -19,6 +19,7 @@
  *
  */
 
+var imgUrl;
 var en = 'en_GB';
 var de = 'de_DE';
 
@@ -31,6 +32,7 @@ var de = 'de_DE';
 	OCA.NMC_Welcome_Popup.Admin = {
 		currentConfig: '1',
 		slideIds: '1',
+		noSlides: '0',
 
 		_getAppConfig: function (key) {
 			return $.ajax({
@@ -42,59 +44,69 @@ var de = 'de_DE';
 			this._getAppConfig('slideIds').done(function (data){
 				if (data.ocs.data.data !== '') {
 					OCA.NMC_Welcome_Popup.Admin.slideIds = data.ocs.data.data;
-					OCA.NMC_Welcome_Popup.Admin.currentConfig = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',').sort()[0];
+					OCA.NMC_Welcome_Popup.Admin.currentConfig = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',')[0];
+				} else {
+					OCA.NMC_Welcome_Popup.Admin.noSlides = '1';
 				}
 				callback();
 			});
 		},
-		getConfigIdentifier: function() {
+		/*getConfigIdentifier: function() {
 			if (this.currentConfig === '1') {
 				return '';
 			}
 			return this.currentConfig + '-';
-		},
+		},*/
 
 		/**
-		 * Add a new provider
-		 * @returns {number} id of the provider
+		 * Add a new slide
+		 * @returns {number} id of the slide
 		 */
 		addSlide: function(callback) {
+			var maxSlides = 5;
 			var slideIds = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',');
-			var nextId = 1;
-			if (slideIds.indexOf('1') >= 0) {
-				nextId = 2;
-				while ($.inArray('' + nextId, slideIds) >= 0) {
-					nextId++;
+			if (slideIds.length < maxSlides) {
+				var nextId = 1;
+				if (slideIds.indexOf('1') >= 0) {
+					nextId = 2;
+					while ($.inArray('' + nextId, slideIds) >= 0) {
+						nextId++;
+					}
 				}
+				OCP.AppConfig.setValue('nmc_welcome_popup', 'slideIds', OCA.NMC_Welcome_Popup.Admin.slideIds + ',' + nextId, {
+					success: function () {
+						OCA.NMC_Welcome_Popup.Admin.slideIds += ',' + nextId;
+						OCA.NMC_Welcome_Popup.Admin.noSlides = '0';
+						callback(nextId)
+					}
+				});
 			}
-			// console.log('Next ID: ' + nextId);
-			OCP.AppConfig.setValue('nmc_welcome_popup', 'slideIds', OCA.NMC_Welcome_Popup.Admin.slideIds + ',' + nextId, {
-				success: function () {
-					OCA.NMC_Welcome_Popup.Admin.slideIds += ',' + nextId;
-					callback(nextId)
-				}
-			});
-			// console.log('Next ID after save: ' + nextId);
 		},
 
 		removeSlide: function(callback) {
-			var slideIds = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',');
-			if (slideIds.length > 1) {
-				var index = slideIds.indexOf(this.currentConfig);
-				if (index > -1) {
-					slideIds.splice(index, 1);
-				}
-				var config = this.currentConfig;
-				$.ajax({ url: OC.generateUrl('/apps/nmc_welcome_popup/ajax/removeSlide/' + this.currentConfig), type: 'DELETE'})
-					.done(function(data) {
-						OCP.AppConfig.setValue('nmc_welcome_popup', 'slideIds', slideIds.join(','), {
-							success: function () {
-								OCA.NMC_Welcome_Popup.Admin.slideIds = slideIds.join(',');
-								callback(config);
-							}
+			if (OCA.NMC_Welcome_Popup.Admin.noSlides === '0') {
+				var slideIds = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',');
+				if (slideIds.length >= 1) {
+					var index = slideIds.indexOf(this.currentConfig);
+					if (index > -1) {
+						slideIds.splice(index, 1);
+					}
+					var config = this.currentConfig;
+					$.ajax({ url: OC.generateUrl('/apps/nmc_welcome_popup/ajax/slideSettings/' + this.currentConfig), type: 'DELETE'})
+						.done(function(data) {
+							OCP.AppConfig.setValue('nmc_welcome_popup', 'slideIds', slideIds.join(','), {
+								success: function () {
+									if (slideIds.length > 0) {
+										OCA.NMC_Welcome_Popup.Admin.slideIds = slideIds.join(',');
+									} else {
+										OCA.NMC_Welcome_Popup.Admin.noSlides = '1';
+										OCA.NMC_Welcome_Popup.Admin.slideIds = '1';
+									}
+									callback(config);
+								}
+							});
 						});
-					});
-
+				}
 			}
 		},
 	}
@@ -105,9 +117,14 @@ function startLoading() {
 	$('#welcome_settings_loading').show();
 }
 
+function startLoadingImg() {
+	OC.msg.startSaving('#welcome_img_loaded_msg');
+	$('#welcome_img_loading').show();
+}
+
 $(function() {
 
-	$('#welcome_popup [data-toggle="tooltip"]').tooltip();
+	// $('#welcome_popup [data-toggle="tooltip"]').tooltip();
 
 	if ($('#slide-image').val()) {
 		$('#remove-img').show();
@@ -119,20 +136,20 @@ $(function() {
 		var image_name = $('#slide-image').val();
 		var slideId = $('.slide-list .active').data('id');
 
-		startLoading();
+		startLoadingImg();
 		$.ajax({
 			type: "DELETE",
 			url: OC.generateUrl('/apps/nmc_welcome_popup/image/' + image_name),
 			data: {'slideId' : slideId}
 		}).done(function(response) {
-			OC.msg.finishedSaving('#welcome_settings_msg', response);
-			$('#welcome_settings_loading').hide();
+			OC.msg.finishedSaving('#welcome_img_loaded_msg', response);
+			$('#welcome_img_loading').hide();
 			$("#slide-image").val("");
-			$("#en-image-uploaded").text("");
+			$("#image-uploaded").text("");
 			$('#remove-img').hide();
 		}).fail(function(response) {
-			OC.msg.finishedError('#welcome_settings_msg', response.responseJSON.status);
-			$('#welcome_settings_loading').hide();
+			OC.msg.finishedError('#welcome_img_loaded_msg', response.responseJSON.status);
+			$('#welcome_img_loading').hide();
 		});
 	});
 
@@ -143,28 +160,29 @@ $(function() {
 			var $form = $(e.target).closest('form');
 			var key = $form.data('image-key');
 
-			OC.msg.finishedSaving('#welcome_settings_msg', response.result);
+			OC.msg.finishedSaving('#welcome_img_loaded_msg', response.result);
 			$form.find('label.button').addClass('icon-upload').removeClass('icon-loading-small');
-			$('#welcome_settings_loading').hide();
-			$("#en-image-uploaded").text(response.result.data.name);
+			$('#welcome_img_loading').hide();
+			$("#image-uploaded").text(response.result.data.name);
 			$("#slide-image").val(response.result.data.image);
+			imgUrl = response.result.data.url;
 			$('#remove-img').show();
 		},
 		submit: function(e, response) {
 			var $form = $(e.target).closest('form');
 			var key = $form.data('image-key');
-			startLoading();
+			startLoadingImg();
 			$form.find('label.button').removeClass('icon-upload').addClass('icon-loading-small');
 		},
 		fail: function (e, response){
 			var $form = $(e.target).closest('form');
-			OC.msg.finishedError('#welcome_settings_msg', response._response.jqXHR.responseJSON.data.message);
+			OC.msg.finishedError('#welcome_img_loaded_msg', response._response.jqXHR.responseJSON.data.message);
 			$form.find('label.button').addClass('icon-upload').removeClass('icon-loading-small');
-			$('#welcome_settings_loading').hide();
+			$('#welcome_img_loading').hide();
 		}
 	});
 
-	function checkID () {
+	/*function checkID () {
 		var length = $('#slide-id').val().length;
 		try {
 			if (length > 0) {
@@ -191,14 +209,45 @@ $(function() {
 
 	$('#slide-id').change(function(e) {
 		var el = $(this);
-	});
+	});*/
 	
 	$('#add_new_popup').click(function() {
-		// var en = 'en_GB';
-		// var de = 'de_DE';
 
 		var slideId = $('.slide-list .active').data('id');
 
+		startLoading();
+		$.post(
+			OC.generateUrl('/apps/nmc_welcome_popup/ajax/slideSettings/' + slideId), getParams()
+		).done(function(response) {
+			OC.msg.finishedSaving('#welcome_settings_msg', response);
+			$('#welcome_settings_loading').hide();
+		}).fail(function(response) {
+			OC.msg.finishedSaving('#welcome_settings_msg', response.responseJSON);
+			$('#welcome_settings_loading').hide();
+		});
+	});
+
+	$('.show-preview').click(function(event) {
+		var lang = $(this).data('lang');
+		event.stopPropagation();
+		event.preventDefault();
+		var slide_params = getParams().slide;
+		var image_name = slide_params.image_uploaded;
+		if (!image_name) {
+			imgUrl = "";
+		} else if(!imgUrl) {
+			var cachebusterImg = Math.round(new Date().getTime() / 1000);
+			imgUrl = OC.generateUrl('/apps/nmc_welcome_popup/image/' + image_name) + '?v=' + cachebusterImg;
+		}
+		var langSlide = slide_params[lang];
+		langSlide.image_url = imgUrl;
+		OCP.Loader.loadScript('nmc_welcome_popup', 'nmc_welcome_popup-main.js').then(function () {
+			window.OCA.NMC_Welcome_Popup.Modal.previewSlide([langSlide]);
+		});
+		return false;
+	});
+
+	function getParams() {
 		var en_title = $('#' + en + '-slide-title').val();
 		var en_primaryBtnLbl = $('#' + en + '-primary-button-label').val();
 		var en_primaryBtnUrl = $('#' + en + '-primary-button-url').val();
@@ -213,23 +262,11 @@ $(function() {
 
 		var image_name = $('#slide-image').val();
 
-		startLoading();
-		$.post(
-			OC.generateUrl('/apps/nmc_welcome_popup/ajax/slideSettings/' + slideId), {'slide': {'en_GB' : {'title' : en_title, 'primary_button_label' : en_primaryBtnLbl, 'primary_button_url' : en_primaryBtnUrl, 'secondary_button_desc' : en_secondaryBtnDesc, 'content': en_text}, 'de_DE' : {'title' : de_title, 'primary_button_label' : de_primaryBtnLbl, 'primary_button_url' : de_primaryBtnUrl, 'secondary_button_desc' : de_secondaryBtnDesc, 'content': de_text},'image_uploaded' : image_name}}
-		).done(function(response) {
-			OC.msg.finishedSaving('#welcome_settings_msg', response);
-			$('#welcome_settings_loading').hide();
-		}).fail(function(response) {
-			OC.msg.finishedSaving('#welcome_settings_msg', response.responseJSON);
-			$('#welcome_settings_loading').hide();
-		});
-	});
+		return {'slide': {'en_GB' : {'title' : en_title, 'primary_button_label' : en_primaryBtnLbl, 'primary_button_url' : en_primaryBtnUrl, 'secondary_button_desc' : en_secondaryBtnDesc, 'content': en_text}, 'de_DE' : {'title' : de_title, 'primary_button_label' : de_primaryBtnLbl, 'primary_button_url' : de_primaryBtnUrl, 'secondary_button_desc' : de_secondaryBtnDesc, 'content': de_text},'image_uploaded' : image_name}};
+	}
 
 	OCA.NMC_Welcome_Popup.Admin.init(function() {
 		$('.slide-list li[data-id="' + OCA.NMC_Welcome_Popup.Admin.currentConfig + '"]').addClass('active');
-		// if (OCA.NMC_Welcome_Popup.Admin.slideIds.split(',').length <= 1) {
-		// 	$('[data-js="remove-idp"]').addClass('hidden');
-		// }
 	});
 
 	var switchSlide = function(slideId) {
@@ -271,6 +308,9 @@ $(function() {
 				$("#slide-image").val("");
 				$('#remove-img').hide();
 			}
+			var imgName = $("#image-name");
+			imgName.val(imgName.data('key') + '_' + slideId);
+			$("#image-uploaded").text("");
 			$('input:checkbox[value="1"]').attr('checked', true);
 			$('input:checkbox[value="0"]').attr('checked', false);
 		});
@@ -278,10 +318,9 @@ $(function() {
 
 	$('.slide-list .add-slide').on('click', function() {
 		OCA.NMC_Welcome_Popup.Admin.addSlide(function (nextId) {
-			$('<li data-id="' + nextId + '"><a>Slide ' + nextId + '</a></li>').insertBefore('.slide-list .add-slide');
-			// console.log('Next slide inserted: ' + nextId);
+			var slideIds = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',');
+			$('<li data-id="' + nextId + '"><a>Slide ' + slideIds.length + '</a></li>').insertBefore('.slide-list .add-slide');
 			switchSlide(nextId);
-			// $('[data-js="remove-idp"]').removeClass('hidden');
 		});
 	});
 
@@ -289,5 +328,28 @@ $(function() {
 		var slideId = '' + $(this).data('id');
 		switchSlide(slideId);
 	});
+
+	$('#remove_slide').on('click', function() {
+		OCA.NMC_Welcome_Popup.Admin.removeSlide(function(currentConfig) {
+			OC.msg.finishedSuccess('#remove_slide_msg', "Slide removed");
+			var slideIds = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',');
+			if (OCA.NMC_Welcome_Popup.Admin.noSlides === '0') {
+				$('.slide-list li[data-id="' + currentConfig + '"]').remove();
+				renameSlides(slideIds);
+				switchSlide(slideIds[0]);
+			} else {
+				$('.slide-list li[data-id="' + currentConfig + '"]').attr('data-id', slideIds[0]);
+				switchSlide(slideIds[0]);
+			}
+		});
+	});
+
+	function renameSlides(slideIds) {
+		for (id = 0; id < slideIds.length; id++) {
+			$('.slide-list li[data-id="' + slideIds[id] + '"] a').text(function(_,text){ 
+				return "Slide " + (id + 1);
+			});
+		}
+	}
 
 });

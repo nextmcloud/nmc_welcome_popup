@@ -28,6 +28,6 @@ return [
 		['name' => 'Slide#uploadImage', 'url' => '/ajax/uploadImage', 'verb' => 'POST'],
 		['name' => 'Slide#deleteImage', 'url' => '/image/{key}', 'verb' => 'DELETE'],
 		['name' => 'Slide#getSlide', 'url' => '/ajax/slideSettings/{slideId}', 'verb' => 'GET', 'defaults' => ['slideId' => '1']],
-		['name' => 'Slide#deleteSlide', 'url' => '/ajax/slideSettings/{slideId}', 'verb' => 'DELETE', 'defaults' => ['providerId' => '1']],
+		['name' => 'Slide#removeSlide', 'url' => '/ajax/slideSettings/{slideId}', 'verb' => 'DELETE', 'defaults' => ['slideId' => '1']],
 	],
 ];

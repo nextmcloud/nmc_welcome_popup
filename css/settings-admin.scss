@@ -16,7 +16,7 @@
         position: relative;
     }
 
-    .welcome-undo {
+    /*.welcome-undo {
         position: absolute;
         top: -7px; // input padding
         right: 4px; // input right margin + border
@@ -28,11 +28,11 @@
         visibility: hidden;
         height: 32px; // height of input
         width: 32px; // height of input
-    }
+    }*/
     form.uploadButton {
         width: 411px;
     }
-    form .welcome-undo,
+    /*form .welcome-undo,
     .welcome-remove-bg {
         cursor: pointer;
         opacity: .3;
@@ -56,7 +56,7 @@
     input[type='url']:focus + .welcome-undo,
     input[type='url']:active + .welcome-undo{
         visibility: visible;
-    }
+    }*/
 
     label span {
         display: inline-block;
@@ -74,23 +74,12 @@
         display: inline-block;
     }
 
-    #welcome_settings_status {
+    /*#welcome_settings_status {
         height: 26px;
         margin: 10px;
-    }
+    }*/
 
-    #welcome_settings_loading {
-        display: inline-block;
-        vertical-align: middle;
-        margin-right: 10px;
-    }
-
-    #welcome_settings_msg {
-        vertical-align: middle;
-        border-radius: 3px;
-    }
-
-    #welcome-preview {
+    /*#welcome-preview {
         #welcome-preview-logo {
             width: 100%;
             height: 100%;
@@ -98,11 +87,11 @@
             background-repeat: no-repeat;
             background-size: contain;
         }
-    }
+    }*/
 
-    .welcome-hints {
+    /*.welcome-hints {
         margin-top: 20px;
-    }
+    }*/
 
     .image-preview {
         display: inline-block;
@@ -139,9 +128,20 @@
 }
 
 /* transition effects for theming value changes */
-#header {
+/*#header {
     transition: background-color 500ms linear;
     svg, img {
         transition: 500ms filter linear;
     }
+}*/
+
+#welcome_settings_loading, #welcome_img_loading {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+#welcome_settings_msg, #welcome_img_loaded_msg {
+    vertical-align: middle;
+    border-radius: 3px;
 }

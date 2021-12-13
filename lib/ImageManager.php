@@ -66,7 +66,7 @@ class ImageManager {
 	}
 
 	public function getImageUrl(string $key): string {
-		$cacheBusterCounter = $this->config->getAppValue('nmc_welcome_popup', 'cachebuster', '0');
+		$cacheBusterCounter = $this->config->getAppValue('nmc_welcome_popup', $key . '_cachebuster', '0');
 		try {
 			return $this->urlGenerator->linkToRoute('nmc_welcome_popup.Slide.getImage', [ 'key' => $key ]) . '?v=' . $cacheBusterCounter;
 		} catch (NotFoundException $e) {
@@ -85,8 +85,7 @@ class ImageManager {
 	 * @throws NotPermittedException
 	 */
 	public function getImage(string $key): ISimpleFile {
-		//$this->logger->info('Image Name: ' . $key);
-		$img = $this->config->getAppValue('nmc_welcome_popup', $key . 'Mime', '');
+		$img = $this->config->getAppValue('nmc_welcome_popup', $key . '_mime', '');
 		$folder = $this->appData->getFolder('images');
 		if ($img === '' || !$folder->fileExists($key)) {
 			throw new NotFoundException();
@@ -98,78 +97,21 @@ class ImageManager {
 		$images = [];
 		foreach ($this->supportedImageKeys as $key) {
 			$images[$key] = [
-				'mime' => $this->config->getAppValue('theming', $key . 'Mime', ''),
+				'mime' => $this->config->getAppValue('theming', $key . '_mime', ''),
 				'url' => $this->getImageUrl($key),
 			];
 		}
 		return $images;
 	}
 
-	/**
-	 * Get folder for current theming files
-	 *
-	 * @return ISimpleFolder
-	 * @throws NotPermittedException
-	 */
-	public function getCacheFolder(): ISimpleFolder {
-		$cacheBusterValue = $this->config->getAppValue('theming', 'cachebuster', '0');
-		try {
-			$folder = $this->appData->getFolder($cacheBusterValue);
-		} catch (NotFoundException $e) {
-			$folder = $this->appData->newFolder($cacheBusterValue);
-			$this->cleanup();
-		}
-		return $folder;
-	}
-
-	/**
-	 * Get a file from AppData
-	 *
-	 * @param string $filename
-	 * @throws NotFoundException
-	 * @return \OCP\Files\SimpleFS\ISimpleFile
-	 * @throws NotPermittedException
-	 */
-	public function getCachedImage(string $filename): ISimpleFile {
-		$currentFolder = $this->getCacheFolder();
-		return $currentFolder->getFile($filename);
-	}
-
-	/**
-	 * Store a file for theming in AppData
-	 *
-	 * @param string $filename
-	 * @param string $data
-	 * @return \OCP\Files\SimpleFS\ISimpleFile
-	 * @throws NotFoundException
-	 * @throws NotPermittedException
-	 */
-	public function setCachedImage(string $filename, string $data): ISimpleFile {
-		$currentFolder = $this->getCacheFolder();
-		if ($currentFolder->fileExists($filename)) {
-			$file = $currentFolder->getFile($filename);
-		} else {
-			$file = $currentFolder->newFile($filename);
-		}
-		$file->putContent($data);
-		return $file;
-	}
-
 	public function delete(string $key) {
 		try {
 			$file = $this->appData->getFolder('images')->getFile($key);
 			$file->delete();
-			$this->config->deleteAppValue('nmc_welcome_popup', 'cachebuster');
 		} catch (NotFoundException $e) {
 			throw $e;
 		} catch (NotPermittedException $e) {
 			throw $e;
-		}
-		try {
-			$file = $this->appData->getFolder('images')->getFile($key . '.png');
-			$file->delete();
-		} catch (NotFoundException $e) {
-		} catch (NotPermittedException $e) {
 		}
 	}
 
@@ -194,7 +136,7 @@ class ImageManager {
 		}
 
 		$target->putContent(file_get_contents($tmpFile));
-		$this->config->setAppValue('nmc_welcome_popup', 'cachebuster', substr(time(), -4));
+		$this->config->setAppValue('nmc_welcome_popup', $key . '_cachebuster', substr(time(), -4));
 		return $detectedMimeType;
 	}
 
@@ -208,19 +150,4 @@ class ImageManager {
 		return $supportedFormats;
 	}
 
-	/**
-	 * remove cached files that are not required any longer
-	 *
-	 * @throws NotPermittedException
-	 * @throws NotFoundException
-	 */
-	public function cleanup() {
-		$currentFolder = $this->getCacheFolder();
-		$folders = $this->appData->getDirectoryListing();
-		foreach ($folders as $folder) {
-			if ($folder->getName() !== 'images' && $folder->getName() !== $currentFolder->getName()) {
-				$folder->delete();
-			}
-		}
-	}
 }

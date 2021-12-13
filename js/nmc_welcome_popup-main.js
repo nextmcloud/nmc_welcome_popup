@@ -6337,9 +6337,9 @@ __webpack_require__.r(__webpack_exports__);
 
       try {
         const response = await _nextcloud_axios__WEBPACK_IMPORTED_MODULE_1___default.a.get(Object(_nextcloud_router__WEBPACK_IMPORTED_MODULE_2__["generateUrl"])('/apps/nmc_welcome_popup/wizard'));
+        this.slides = this.slides.slice(0, 1);
         this.slides.push(...response.data.slides);
-        this.withIntro = response.data.hasVideo;
-        this.slidesLoaded = true;
+        this.withIntro = response.data.hasVideo; // this.slidesLoaded = true
       } catch (e) {
         console.error('Failed to load slides');
       }
@@ -6348,6 +6348,14 @@ __webpack_require__.r(__webpack_exports__);
     async open(withIntro = true) {
       await this.loadStaticSlides();
       this.withIntro = this.withIntro & withIntro;
+      this.showModal = true;
+      this.currentSlide = 0;
+    },
+
+    previewSlide(slide = []) {
+      this.slides = this.slides.slice(0, 1);
+      this.slides.push(...slide);
+      this.withIntro = false;
       this.showModal = true;
       this.currentSlide = 0;
     },
@@ -38586,11 +38594,12 @@ el.id = 'nmc_welcome_popup';
 document.querySelector('body').appendChild(el);
 const View = vue__WEBPACK_IMPORTED_MODULE_0__["default"].extend(_App_vue__WEBPACK_IMPORTED_MODULE_3__["default"]);
 const vm = new View().$mount(el);
-window.OCA.NMC_Welcome_Popup = {
-  open: vm.open
+window.OCA.NMC_Welcome_Popup.Modal = {
+  open: vm.open,
+  previewSlide: vm.previewSlide
 };
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=3c664c5d596ce9738b79
+//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=f9313b2dcc3624c4c6c3

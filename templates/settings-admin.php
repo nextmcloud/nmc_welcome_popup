@@ -43,21 +43,22 @@ $_[$en]['secondary_button_desc'] = isset($_[$en]['secondary_button_desc']) ? $_[
 $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 
 $_['slide_ids'] = (isset($_['slide_ids']) && is_array($_['slide_ids'])) ? $_['slide_ids'] : [1];
+$length = count($_['slide_ids']);
 
 ?>
 <div id="welcome_popup" class="section">
 	<h2 class="inlineblock"><?php p($l->t('Create a new welcome pop-up')); ?></h2>
 	<ul class="slide-list settings-hint">
-		<?php foreach ($_['slide_ids'] as $id) { ?>
-		<li data-id="<?php p($id); ?>">
-			<a href="#">Slide <?php p($id); ?></a>
+		<?php for ($id = 0; $id < $length; $id++) { ?>
+		<li data-id="<?php p($_['slide_ids'][$id]); ?>">
+			<a href="#">Slide <?php p($id + 1); ?></a>
 		</li>
 		<?php } ?>
 		<li class="add-slide"><a href="#" class="button"><span class="icon-add"></span></a></li>
 	</ul>
 	<div>
-		<div id="welcome_settings_loading" class="icon-loading-small" style="display: none;"></div>
-		<span id="welcome_settings_msg" class="msg success" style="display: none;">Saved</span>
+		<div id="welcome_img_loading" class="icon-loading-small" style="display: none;"></div>
+		<span id="welcome_img_loaded_msg" class="msg success" style="display: none;">Saved</span>
 	</div>
 	<p>
 		<?php p($_['errorMessage']) ?>
@@ -65,12 +66,12 @@ $_['slide_ids'] = (isset($_['slide_ids']) && is_array($_['slide_ids'])) ? $_['sl
 	<div>
 		<form class="uploadButton" method="post" action="<?php p($_['uploadImageRoute']) ?>" data-image-key="image">
 			<input type="hidden" id="slide-image" value="<?php p($_['image_uploaded']); ?>" />
-			<input type="hidden" name="key" value="welcome_image" />
-			<label for="en-uploadimage"><span style="min-width: 50px;">Image</span></label>
-			<input id="en-uploadimage" class="fileupload" name="image" type="file" />
+			<input type="hidden" name="key" id="image-name" data-key="welcome_image" value="welcome_image_<?php p($_['slide_ids'][0]); ?>" />
+			<label for="uploadimage"><span style="min-width: 50px;">Image</span></label>
+			<input id="uploadimage" class="fileupload" name="image" type="file" />
 			<div class="image-label">
-				<label for="en-uploadimage" class="button icon-upload svg" id="en-uploadimage" title="<?php p($l->t('Header image for the pop-up')) ?>"></label>
-				<label id="en-image-uploaded"></label>
+				<label for="uploadimage" class="button icon-upload svg" id="uploadimage" title="<?php p($l->t('Header image for the pop-up')) ?>"></label>
+				<label id="image-uploaded"></label>
 				<a id="remove-img" class="icon-delete" style="display: none;"></a>
 			</div>
 		</form>
@@ -104,18 +105,16 @@ $_['slide_ids'] = (isset($_['slide_ids']) && is_array($_['slide_ids'])) ? $_['sl
 	<div>
 		<label>
 			<div>Text</div>
-			<textarea id="<?php p($de) ?>-text" data-key="<?php p($de) ?>_content" placeholder="HTML interpretierender Text für das Pop-up" rows="16" cols="48" maxlength="500"><?php p($_[$de]['content']) ?></textarea>
+			<textarea id="<?php p($de) ?>-text" data-key="<?php p($de) ?>_content" placeholder="HTML interpretierender Text für das Pop-up" rows="16" cols="48" maxlength="1000"><?php p($_[$de]['content']) ?></textarea>
 		</label>
+	</div>
+	<div>
+		<input type="button" id="<?php p($de) ?>-show-preview" class="show-preview" data-lang="<?php p($de) ?>" value="Vorschau" style="width: auto;" />
 	</div>
 </div>
 </div>
 <div id="welcome_popup" class="section section-english" style="display: inline-block">
 	<h2 class="inlineblock"></h2>
-	<p class="settings-hint"></p>
-	<div>
-		<div id="welcome_settings_loading" class="icon-loading-small" style="display: none;"></div>
-		<span id="welcome_settings_msg" class="msg success" style="display: none;">Saved</span>
-	</div>
 	<h3 class="inlineblock">English</h3>
 	<div>
 		<label>
@@ -126,7 +125,7 @@ $_['slide_ids'] = (isset($_['slide_ids']) && is_array($_['slide_ids'])) ? $_['sl
 	<h4 class="inlineblock"></h4>
 	<div>
 		<label>
-			<div><?php p($l->t('Buttons')) ?></div>
+			<div>Buttons</div>
 			<input id="<?php p($en) ?>-primary-button-label" type="text" data-key="<?php p($en) ?>_primary_button_label" placeholder="Primary button label" value="<?php p($_[$en]['primary_button_label']) ?>" maxlength="250" />
 		</label>
 	</div>
@@ -142,13 +141,29 @@ $_['slide_ids'] = (isset($_['slide_ids']) && is_array($_['slide_ids'])) ? $_['sl
 	<h4 class="inlineblock"></h4>
 	<div>
 		<label>
-			<div><?php p($l->t('Text')) ?></div>
-			<textarea id="<?php p($en) ?>-text" data-key="<?php p($en) ?>_content" placeholder="HTML interpreting text for the pop-up" rows="16" cols="48" maxlength="500"><?php p($_[$en]['content']) ?></textarea>
+			<div>Text</div>
+			<textarea id="<?php p($en) ?>-text" data-key="<?php p($en) ?>_content" placeholder="HTML interpreting text for the pop-up" rows="16" cols="48" maxlength="1000"><?php p($_[$en]['content']) ?></textarea>
 		</label>
+	</div>
+	<div>
+		<input type="button" id="<?php p($en) ?>-show-preview" class="show-preview" data-lang="<?php p($en) ?>" value="Preview" style="width: auto;" />
 	</div>
 </div>
 </div>
 <div class="section" style="padding-top: 0px;">
+	<h4 class="inlineblock"></h4>
+	<div>
+		<span id="remove_slide_msg" class="msg success" style="display: none;">Saved</span>
+	</div>
+	<h4 class="inlineblock"></h4>
+	<div>
+		<input type="button" id="remove_slide" value="<?php p($l->t('Remove slide')); ?>" />
+	</div>
+	<h4 class="inlineblock"></h4>
+	<div>
+		<div id="welcome_settings_loading" class="icon-loading-small" style="display: none;"></div>
+		<span id="welcome_settings_msg" class="msg success" style="display: none;">Saved</span>
+	</div>
 	<h4 class="inlineblock"></h4>
 	<div>
 		<input type="button" id="add_new_popup" value="<?php p($l->t('Save pop-up')); ?>" />

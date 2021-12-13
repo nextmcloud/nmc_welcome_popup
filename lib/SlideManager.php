@@ -78,4 +78,24 @@ class SlideManager {
 		return $slides[$slideId];
 	}
 
+	/**
+	 * @param int $slideId
+	 * @return array
+	 */
+	public function removeSlide($slideId) {
+		$slides = $this->getSlides();
+		if (isset($slides[$slideId])) {
+			$slide = $slides[$slideId];
+			unset($slides[$slideId]);
+		} else {
+			$slide = [];
+		}
+		if (empty($slide)) {
+			$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', '');
+		} else {
+			$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', json_encode($slides));
+		}
+		return $slide;
+	}
+
 }

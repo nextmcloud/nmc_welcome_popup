@@ -70,9 +70,18 @@ class Admin implements ISettings {
 	 */
 	public function getForm(): TemplateResponse {
 		$errorMessage = '';
+		$parameters = [];
 		$slideIds = explode(',', $this->config->getAppValue('nmc_welcome_popup', 'slideIds', '1'));
-		natsort($slideIds);
-		$parameters = $this->slideManager->getSlidesToDisplay($slideIds[0]);
+		$slides = $this->slideManager->getSlides();
+		if (empty($slides)) {
+			$slideIds = [1];
+		} else {
+			$slideIds = array_keys($slides);
+		}
+		$this->config->setAppValue('nmc_welcome_popup', 'slideIds', implode(',', $slideIds));
+		if (isset($slides[$slideIds[0]])) {
+			$parameters = $slides[$slideIds[0]];
+		}
 		$parameters['slide_ids'] = $slideIds;
 		$parameters['uploadImageRoute'] = $this->urlGenerator->linkToRoute('nmc_welcome_popup.Slide.uploadImage');
 		$parameters['errorMessage'] = $errorMessage;
