@@ -30,7 +30,7 @@
 			</slot>
 		</div>
 		<div class="modal-footer">
-			<button v-if="isLast"
+			<button
 				class="primary modal-default-button"
 				@click="close">{{ slideList[currentSlide].secondary_button_desc }}</button>
 			<a :href="slideList[currentSlide].primary_button_url"
