@@ -29272,22 +29272,18 @@ var render = function() {
           ),
           _vm._v(" "),
           _c("div", { staticClass: "modal-footer" }, [
-            _vm.isLast
-              ? _c(
-                  "button",
-                  {
-                    staticClass: "primary modal-default-button",
-                    on: { click: _vm.close }
-                  },
-                  [
-                    _vm._v(
-                      _vm._s(
-                        _vm.slideList[_vm.currentSlide].secondary_button_desc
-                      )
-                    )
-                  ]
+            _c(
+              "button",
+              {
+                staticClass: "primary modal-default-button",
+                on: { click: _vm.close }
+              },
+              [
+                _vm._v(
+                  _vm._s(_vm.slideList[_vm.currentSlide].secondary_button_desc)
                 )
-              : _vm._e(),
+              ]
+            ),
             _vm._v(" "),
             _c(
               "a",
@@ -38594,7 +38590,7 @@ el.id = 'nmc_welcome_popup';
 document.querySelector('body').appendChild(el);
 const View = vue__WEBPACK_IMPORTED_MODULE_0__["default"].extend(_App_vue__WEBPACK_IMPORTED_MODULE_3__["default"]);
 const vm = new View().$mount(el);
-window.OCA.NMC_Welcome_Popup = {
+window.OCA.NMC_Welcome_Popup.Modal = {
   open: vm.open,
   previewSlide: vm.previewSlide
 };
@@ -38602,4 +38598,4 @@ window.OCA.NMC_Welcome_Popup = {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=f9313b2dcc3624c4c6c3
+//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=abf1b129bf92f31b64a0
