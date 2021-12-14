@@ -90,7 +90,7 @@ class SlideManager {
 		} else {
 			$slide = [];
 		}
-		if (empty($slide)) {
+		if (empty($slides)) {
 			$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', '');
 		} else {
 			$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', json_encode($slides));

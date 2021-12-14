@@ -29,6 +29,7 @@ $en = 'en_GB';
 $de = 'de_DE';
 
 $_['image_uploaded'] = isset($_['image_uploaded']) ? $_['image_uploaded'] : "";
+$_['image_url'] = isset($_['image_url']) ? $_['image_url'] : "";
 
 $_[$de]['title'] = isset($_[$de]['title']) ? $_[$de]['title'] : "";
 $_[$de]['primary_button_label'] = isset($_[$de]['primary_button_label']) ? $_[$de]['primary_button_label'] : "";
@@ -45,6 +46,12 @@ $_[$en]['content'] = isset($_[$en]['content']) ? $_[$en]['content'] : "";
 $_['slide_ids'] = (isset($_['slide_ids']) && is_array($_['slide_ids'])) ? $_['slide_ids'] : [1];
 $length = count($_['slide_ids']);
 
+if ($length >= 5) {
+	$displayAddBtnStyle = "display: none";
+} else {
+	$displayAddBtnStyle = '';
+}
+
 ?>
 <div id="welcome_popup" class="section">
 	<h2 class="inlineblock"><?php p($l->t('Create a new welcome pop-up')); ?></h2>
@@ -54,7 +61,7 @@ $length = count($_['slide_ids']);
 			<a href="#">Slide <?php p($id + 1); ?></a>
 		</li>
 		<?php } ?>
-		<li class="add-slide"><a href="#" class="button"><span class="icon-add"></span></a></li>
+		<li class="add-slide" style="<?php p($displayAddBtnStyle); ?>"><a href="#" class="button"><span class="icon-add"></span></a></li>
 	</ul>
 	<div>
 		<div id="welcome_img_loading" class="icon-loading-small" style="display: none;"></div>
@@ -65,7 +72,7 @@ $length = count($_['slide_ids']);
 	</p>
 	<div>
 		<form class="uploadButton" method="post" action="<?php p($_['uploadImageRoute']) ?>" data-image-key="image">
-			<input type="hidden" id="slide-image" value="<?php p($_['image_uploaded']); ?>" />
+			<input type="hidden" id="slide-image" data-imgurl="<?php p($_['image_url']); ?>" value="<?php p($_['image_uploaded']); ?>" />
 			<input type="hidden" name="key" id="image-name" data-key="welcome_image" value="welcome_image_<?php p($_['slide_ids'][0]); ?>" />
 			<label for="uploadimage"><span style="min-width: 50px;">Image</span></label>
 			<input id="uploadimage" class="fileupload" name="image" type="file" />
@@ -94,7 +101,7 @@ $length = count($_['slide_ids']);
 	</div>
 	<div>
 		<label>
-			<input id="<?php p($de) ?>-primary-button-url" type="url" data-key="<?php p($de) ?>_primary_button_url" placeholder="Link für den primären Button" value="<?php p($_[$de]['primary_button_url']) ?>" maxlength="500" />
+			<input id="<?php p($de) ?>-primary-button-url" type="url" pattern="https?://.+" data-key="<?php p($de) ?>_primary_button_url" placeholder="Link für den primären Button" value="<?php p($_[$de]['primary_button_url']) ?>" maxlength="500" />
 		</label>
 	<div>
 		<label>

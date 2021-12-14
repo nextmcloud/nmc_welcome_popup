@@ -29,6 +29,7 @@
 namespace OCA\NMC_Welcome_Popup\Settings;
 
 use OCA\NMC_Welcome_Popup\SlideManager;
+use OCA\NMC_Welcome_Popup\ImageManager;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -47,6 +48,9 @@ class Admin implements ISettings {
 	/** @var SlideManager */
 	protected $slideManager;
 
+	/** @var ImageManager */
+	private $imageManager;
+
 	/** @var IURLGenerator */
 	private $urlGenerator;
 
@@ -57,10 +61,12 @@ class Admin implements ISettings {
 								IL10N $l,
 								ILogger $logger,
 								SlideManager $slideManager,
+								ImageManager $imageManager,
 								IURLGenerator $urlGenerator) {
 		$this->config = $config;
 		$this->l = $l;
 		$this->slideManager = $slideManager;
+		$this->imageManager = $imageManager;
 		$this->urlGenerator = $urlGenerator;
 		$this->logger = $logger;
 	}
@@ -79,8 +85,13 @@ class Admin implements ISettings {
 			$slideIds = array_keys($slides);
 		}
 		$this->config->setAppValue('nmc_welcome_popup', 'slideIds', implode(',', $slideIds));
+		$parameters['image_url'] = '';
 		if (isset($slides[$slideIds[0]])) {
 			$parameters = $slides[$slideIds[0]];
+			if (!empty($parameters['image_uploaded'])) {
+				$imageURL = $this->imageManager->getImageUrl('welcome_image_' . $slideIds[0]);
+				$parameters['image_url'] = $imageURL;
+			}
 		}
 		$parameters['slide_ids'] = $slideIds;
 		$parameters['uploadImageRoute'] = $this->urlGenerator->linkToRoute('nmc_welcome_popup.Slide.uploadImage');

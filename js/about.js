@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+	OCA.NMC_Welcome_Popup = OCA.NMC_Welcome_Popup || {};
 	var aboutEntry = document.querySelector('#expanddiv li[data-id="nmc_welcome_popup-about"] a');
 	if (aboutEntry) {
 		aboutEntry.addEventListener('click', function (event) {

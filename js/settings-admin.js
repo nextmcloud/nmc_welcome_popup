@@ -33,6 +33,7 @@ var de = 'de_DE';
 		currentConfig: '1',
 		slideIds: '1',
 		noSlides: '0',
+		maxSlides: '5',
 
 		_getAppConfig: function (key) {
 			return $.ajax({
@@ -51,21 +52,14 @@ var de = 'de_DE';
 				callback();
 			});
 		},
-		/*getConfigIdentifier: function() {
-			if (this.currentConfig === '1') {
-				return '';
-			}
-			return this.currentConfig + '-';
-		},*/
 
 		/**
 		 * Add a new slide
 		 * @returns {number} id of the slide
 		 */
 		addSlide: function(callback) {
-			var maxSlides = 5;
 			var slideIds = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',');
-			if (slideIds.length < maxSlides) {
+			if (slideIds.length < OCA.NMC_Welcome_Popup.Admin.maxSlides) {
 				var nextId = 1;
 				if (slideIds.indexOf('1') >= 0) {
 					nextId = 2;
@@ -118,7 +112,7 @@ function startLoading() {
 }
 
 function startLoadingImg() {
-	OC.msg.startSaving('#welcome_img_loaded_msg');
+	// OC.msg.startSaving('#welcome_img_loaded_msg');
 	$('#welcome_img_loading').show();
 }
 
@@ -126,10 +120,18 @@ $(function() {
 
 	// $('#welcome_popup [data-toggle="tooltip"]').tooltip();
 
+	var addSlideBtn = $('.slide-list .add-slide');
+	var slideDataId = '.slide-list li[data-id=';
+
 	if ($('#slide-image').val()) {
 		$('#remove-img').show();
 	} else {
 		$('#remove-img').hide();
+	}
+
+	if(!imgUrl) {
+		imgUrl = $('#slide-image').data('imgurl');
+		$('#slide-image').data('imgurl', '');
 	}
 
 	$('#remove-img').click(function (e) {
@@ -160,13 +162,13 @@ $(function() {
 			var $form = $(e.target).closest('form');
 			var key = $form.data('image-key');
 
-			OC.msg.finishedSaving('#welcome_img_loaded_msg', response.result);
+			// OC.msg.finishedSaving('#welcome_img_loaded_msg', response.result);
 			$form.find('label.button').addClass('icon-upload').removeClass('icon-loading-small');
 			$('#welcome_img_loading').hide();
 			$("#image-uploaded").text(response.result.data.name);
 			$("#slide-image").val(response.result.data.image);
 			imgUrl = response.result.data.url;
-			$('#remove-img').show();
+			// $('#remove-img').show();
 		},
 		submit: function(e, response) {
 			var $form = $(e.target).closest('form');
@@ -181,35 +183,6 @@ $(function() {
 			$('#welcome_img_loading').hide();
 		}
 	});
-
-	/*function checkID () {
-		var length = $('#slide-id').val().length;
-		try {
-			if (length > 0) {
-				return true;
-			} else {
-				throw t('theming', 'ID cannot be empty');
-			}
-		} catch (error) {
-			$('#slide-id').attr('title', error);
-			$('#slide-id').tooltip({placement: 'top', trigger: 'manual'});
-			$('#slide-id').tooltip('fixTitle');
-			$('#slide-id').tooltip('show');
-			$('#slide-id').addClass('error');
-		}
-		return false;
-	}
-
-	$('#slide-id').keyup(function() {
-		if (checkID()) {
-			$('#slide-id').tooltip('hide');
-			$('#slide-id').removeClass('error');
-		}
-	});
-
-	$('#slide-id').change(function(e) {
-		var el = $(this);
-	});*/
 	
 	$('#add_new_popup').click(function() {
 
@@ -221,6 +194,9 @@ $(function() {
 		).done(function(response) {
 			OC.msg.finishedSaving('#welcome_settings_msg', response);
 			$('#welcome_settings_loading').hide();
+			if ($('#slide-image').val()) {
+				$('#remove-img').show();
+			}
 		}).fail(function(response) {
 			OC.msg.finishedSaving('#welcome_settings_msg', response.responseJSON);
 			$('#welcome_settings_loading').hide();
@@ -266,12 +242,12 @@ $(function() {
 	}
 
 	OCA.NMC_Welcome_Popup.Admin.init(function() {
-		$('.slide-list li[data-id="' + OCA.NMC_Welcome_Popup.Admin.currentConfig + '"]').addClass('active');
+		$(slideDataId + '"' + OCA.NMC_Welcome_Popup.Admin.currentConfig + '"]').addClass('active');
 	});
 
 	var switchSlide = function(slideId) {
 		$('.slide-list li').removeClass('active');
-		$('.slide-list li[data-id="' + slideId + '"]').addClass('active');
+		$(slideDataId + '"' + slideId + '"]').addClass('active');
 		OCA.NMC_Welcome_Popup.Admin.currentConfig = '' + slideId;
 		$.get(OC.generateUrl('/apps/nmc_welcome_popup/ajax/slideSettings/' + slideId)).done(function(data) {
 			if (Object.entries(data).length > 0) {
@@ -293,13 +269,15 @@ $(function() {
 								console.log('unable to find element for ' + configKey);
 							}
 						});
-					} else if (form_section =='image_uploaded') {
+					} else if (form_section == 'image_uploaded') {
 						$("#slide-image").val(data[form_section]);
 						if ($('#slide-image').val()) {
 							$('#remove-img').show();
 						} else {
 							$('#remove-img').hide();
 						}
+					} else if (form_section == 'image_url') {
+						imgUrl = data[form_section];
 					}
 				});
 			} else {
@@ -316,11 +294,14 @@ $(function() {
 		});
 	};
 
-	$('.slide-list .add-slide').on('click', function() {
+	addSlideBtn.on('click', function() {
 		OCA.NMC_Welcome_Popup.Admin.addSlide(function (nextId) {
 			var slideIds = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',');
-			$('<li data-id="' + nextId + '"><a>Slide ' + slideIds.length + '</a></li>').insertBefore('.slide-list .add-slide');
+			$('<li data-id="' + nextId + '"><a>Slide ' + slideIds.length + '</a></li>').insertBefore(addSlideBtn[0]);
 			switchSlide(nextId);
+			if (slideIds.length >= OCA.NMC_Welcome_Popup.Admin.maxSlides) {
+				addSlideBtn.hide();
+			}
 		});
 	});
 
@@ -334,19 +315,22 @@ $(function() {
 			OC.msg.finishedSuccess('#remove_slide_msg', "Slide removed");
 			var slideIds = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',');
 			if (OCA.NMC_Welcome_Popup.Admin.noSlides === '0') {
-				$('.slide-list li[data-id="' + currentConfig + '"]').remove();
+				$(slideDataId + '"' + currentConfig + '"]').remove();
 				renameSlides(slideIds);
 				switchSlide(slideIds[0]);
 			} else {
-				$('.slide-list li[data-id="' + currentConfig + '"]').attr('data-id', slideIds[0]);
+				$(slideDataId + '"' + currentConfig + '"]').attr('data-id', slideIds[0]);
 				switchSlide(slideIds[0]);
+			}
+			if (addSlideBtn.is(":hidden")) {
+				addSlideBtn.show();
 			}
 		});
 	});
 
 	function renameSlides(slideIds) {
 		for (id = 0; id < slideIds.length; id++) {
-			$('.slide-list li[data-id="' + slideIds[id] + '"] a').text(function(_,text){ 
+			$(slideDataId +'"' + slideIds[id] + '"] a').text(function(_,text){
 				return "Slide " + (id + 1);
 			});
 		}

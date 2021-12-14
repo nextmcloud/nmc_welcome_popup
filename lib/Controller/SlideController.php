@@ -29,7 +29,6 @@ use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http;
 use OCP\IConfig;
 use OCP\IRequest;
-// use OC\Template\SCSSCacher;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
@@ -59,8 +58,6 @@ class SlideController extends Controller {
 	/** @var array|false|string[] */
 	protected $slides = [];
 
-	// private $scssCacher;
-
 	/** @var IL10N */
 	private $l10n;
 
@@ -86,7 +83,6 @@ class SlideController extends Controller {
 								SlideManager $slideManager,
 								ImageManager $imageManager,
 								Admin $admin,
-								// SCSSCacher $scssCacher,
 								IL10N $l,
 								ILogger $logger,
 								IURLGenerator $urlGenerator) {
@@ -96,14 +92,12 @@ class SlideController extends Controller {
 		$this->slideManager = $slideManager;
 		$this->imageManager = $imageManager;
 		$this->admin = $admin;
-		// $this->scssCacher = $scssCacher;
 		$this->l10n = $l;
 		$this->logger = $logger;
 		$this->urlGenerator = $urlGenerator;
 	}
 
 	public function addSlide($slideId, $slide) {
-		//$this->logger->debug('Slide: ' . print_r($slide, true));
 		foreach ($slide as $section => $field) {
 			if (is_array($field)) {
 				$slide[$section] = array_map('trim', $field);
@@ -150,15 +144,11 @@ class SlideController extends Controller {
 		$this->slideManager->addSlide($slideId, $slide);
 		$this->config->deleteAppFromAllUsers($this->appName);
 
-		// reprocess server scss for preview
-		// $cssCached = $this->scssCacher->process(\OC::$SERVERROOT, 'core/css/css-variables.scss', 'core');
-
 		return new DataResponse (
 			[
 				'data' =>
 					[
 						'message' => $this->l10n->t('Saved'),
-						// 'serverCssUrl' => $this->urlGenerator->linkTo('', $this->scssCacher->getCachedSCSS('core', '/core/css/css-variables.scss'))
 					],
 				'status' => 'success'
 			]
@@ -171,6 +161,10 @@ class SlideController extends Controller {
 	 */
 	public function getSlide($slideId) {
 		$params = $this->slideManager->getSlidesToDisplay($slideId);
+		if (!empty($params['image_uploaded'])) {
+			$imageURL = $this->imageManager->getImageUrl('welcome_image_' . $slideId);
+			$params['image_url'] = $imageURL;
+		}
 		return $params;
 	}
 
@@ -254,7 +248,6 @@ class SlideController extends Controller {
 		}
 
 		$name = $image['name'];
-		// $cssCached = $this->scssCacher->process(\OC::$SERVERROOT, 'core/css/css-variables.scss', 'core');
 
 		return new DataResponse(
 			[
@@ -265,7 +258,6 @@ class SlideController extends Controller {
 						'url' => $this->imageManager->getImageUrl($key),
 						'image' => $key,
 						'message' => $this->l10n->t('Saved'),
-						// 'serverCssUrl' => $this->urlGenerator->linkTo('', $this->scssCacher->getCachedSCSS('core', '/core/css/css-variables.scss'))
 					],
 				'status' => 'success'
 			]
