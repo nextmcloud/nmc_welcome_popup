@@ -113,6 +113,9 @@ function startLoading() {
 
 function startLoadingImg() {
 	// OC.msg.startSaving('#welcome_img_loaded_msg');
+	if ($('#welcome_img_loaded_msg').is(":hidden") == false) {
+		$('#welcome_img_loaded_msg').hide();
+	}
 	$('#welcome_img_loading').show();
 }
 
@@ -198,7 +201,7 @@ $(function() {
 				$('#remove-img').show();
 			}
 		}).fail(function(response) {
-			OC.msg.finishedSaving('#welcome_settings_msg', response.responseJSON);
+			OC.msg.finishedError('#welcome_settings_msg', response.responseJSON.data.message);
 			$('#welcome_settings_loading').hide();
 		});
 	});
@@ -248,6 +251,12 @@ $(function() {
 	var switchSlide = function(slideId) {
 		$('.slide-list li').removeClass('active');
 		$(slideDataId + '"' + slideId + '"]').addClass('active');
+		if ($('#welcome_img_loaded_msg').is(":hidden") == false) {
+			$('#welcome_img_loaded_msg').hide();
+		}
+		if ($('#welcome_settings_msg').is(":hidden") == false) {
+			$('#welcome_settings_msg').hide();
+		}
 		OCA.NMC_Welcome_Popup.Admin.currentConfig = '' + slideId;
 		$.get(OC.generateUrl('/apps/nmc_welcome_popup/ajax/slideSettings/' + slideId)).done(function(data) {
 			if (Object.entries(data).length > 0) {

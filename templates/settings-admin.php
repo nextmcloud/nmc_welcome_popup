@@ -101,7 +101,7 @@ if ($length >= 5) {
 	</div>
 	<div>
 		<label>
-			<input id="<?php p($de) ?>-primary-button-url" type="url" pattern="https?://.+" data-key="<?php p($de) ?>_primary_button_url" placeholder="Link für den primären Button" value="<?php p($_[$de]['primary_button_url']) ?>" maxlength="500" />
+			<input id="<?php p($de) ?>-primary-button-url" type="text" data-key="<?php p($de) ?>_primary_button_url" placeholder="Link für den primären Button" value="<?php p($_[$de]['primary_button_url']) ?>" maxlength="500" />
 		</label>
 	<div>
 		<label>
@@ -138,7 +138,7 @@ if ($length >= 5) {
 	</div>
 	<div>
 		<label>
-			<input id="<?php p($en) ?>-primary-button-url" type="url" data-key="<?php p($en) ?>_primary_button_url" placeholder="URL for primary button" value="<?php p($_[$en]['primary_button_url']) ?>" maxlength="500" />
+			<input id="<?php p($en) ?>-primary-button-url" type="text" data-key="<?php p($en) ?>_primary_button_url" placeholder="URL for primary button" value="<?php p($_[$en]['primary_button_url']) ?>" maxlength="500" />
 		</label>
 	<div>
 		<label>

@@ -108,24 +108,30 @@ class SlideController extends Controller {
 		$error = null;
 		$en = 'en_GB';
 		$de = 'de_DE';
+		$primaryBtnUrl = $slide[$en]['primary_button_url'];
 		if ($slide[$en]['title'] == '') {
 			$error = 'No Title';
 		} elseif ($slide[$en]['primary_button_label'] == '') {
 			$error = 'No Primary button label';
-		} elseif ($slide[$en]['primary_button_url'] == '') {
+		} elseif ($primaryBtnUrl == '') {
 			$error = 'No Primary button url';
+		} elseif (filter_var($primaryBtnUrl, FILTER_VALIDATE_URL) === false || (strpos($primaryBtnUrl, 'http://') !== 0 && strpos($primaryBtnUrl, 'https://') !== 0)) {
+			$error = 'Not a valid URL for primary button';
 		} elseif ($slide[$en]['secondary_button_desc'] == '') {
 			$error = 'No Secondary button description given';
 		} elseif ($slide[$en]['content'] == '') {
 			$error = 'No Text given';
 		}
-		
+
+		$primaryBtnUrl = $slide[$de]['primary_button_url'];
 		if ($slide[$de]['title'] == '') {
 			$error = 'Kein Titel';
 		} elseif ($slide[$de]['primary_button_label'] == '') {
 			$error = 'Keine primäre Schaltflächenbeschriftung';
-		} elseif ($slide[$de]['primary_button_url'] == '') {
+		} elseif ($primaryBtnUrl == '') {
 			$error = 'Keine primäre button url';
+		} elseif (filter_var($primaryBtnUrl, FILTER_VALIDATE_URL) === false || (strpos($primaryBtnUrl, 'http://') !== 0 && strpos($primaryBtnUrl, 'https://') !== 0)) {
+			$error = 'Keine gültige URL für die primäre Schaltfläche';
 		} elseif ($slide[$de]['secondary_button_desc'] == '') {
 			$error = 'Keine Beschreibung der sekundären Schaltfläche angegeben';
 		} elseif ($slide[$de]['content'] == '') {
