@@ -30,19 +30,38 @@
 			</slot>
 		</div>
 		<div class="modal-footer">
-			<button
-				class="primary modal-default-button"
-				@click="close">{{ slideList[currentSlide].secondary_button_desc }}</button>
-			<a :href="slideList[currentSlide].primary_button_url"
-				:label="slideList[currentSlide].primary_button_label"
-				target="_blank"
-				class="button">{{ slideList[currentSlide].primary_button_label }}</a>
+			<div class="pagination">
+				<span class="Left-arrowBtn" @click="previous">&laquo;</span>
+				<span class="slide-counter">{{ this.currentSlide + 1 }} of {{ slideList.length }}</span>
+				<span class="Right-arrowBtn" @click="next">&raquo;</span>
+			</div>
+			<div class="footer-actions">
+				<button
+					class="primary modal-default-button"
+					@click="close">{{ slideList[currentSlide].secondary_button_desc }}</button>
+				<a :href="slideList[currentSlide].primary_button_url"
+					:label="slideList[currentSlide].primary_button_label"
+					target="_blank"
+					class="button">{{ slideList[currentSlide].primary_button_label }}</a>
+			</div>
 		</div>
 	</Modal>
 </template>
 <style lang="scss">
 	/* Page styling needs to be unscoped, since we load it separately from the server */
 	#nmc_welcome_popup {
+		.header-close {
+			display: none;
+		}
+
+		.icon-next {
+			display: none;
+		}
+
+		.icon-previous {
+			display: none;
+		}
+
 		a.button {
 			-webkit-appearance: button;
 			-moz-appearance: button;
@@ -307,6 +326,7 @@
 		display: flex;
 		bottom: 0;
 		right: 0;
+		width: 100%;
 	}
 
 	.modal-footer button {
