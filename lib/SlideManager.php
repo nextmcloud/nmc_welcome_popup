@@ -92,6 +92,8 @@ class SlideManager {
 		}
 		if (!empty($slides)) {
 			$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', json_encode($slides));
+		} else {
+			$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', '');
 		}
 		return $slide;
 	}
