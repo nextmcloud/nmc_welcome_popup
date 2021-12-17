@@ -12,7 +12,7 @@
 		<div v-if="currentSlide !== 0 || !withIntro" class="modal-header">
 			<div class="nmc_welcome_popup-header">
 				<h2 v-html="slideList[currentSlide].title" />
-				<button v-if="isLast"
+				<button
 					class="primary modal-default-button"
 					@click="close"></button>
 			</div>
@@ -31,9 +31,9 @@
 		</div>
 		<div class="modal-footer">
 			<div class="pagination">
-				<span class="Left-arrowBtn" @click="previous">&laquo;</span>
+				<span class="Left-arrowBtn" @click="previous">&lt;</span>
 				<span class="slide-counter">{{ this.currentSlide + 1 }} of {{ slideList.length }}</span>
-				<span class="Right-arrowBtn" @click="next">&raquo;</span>
+				<span class="Right-arrowBtn" @click="next">&gt;</span>
 			</div>
 			<div class="footer-actions">
 				<button

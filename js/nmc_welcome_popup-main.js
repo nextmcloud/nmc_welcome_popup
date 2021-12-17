@@ -29296,7 +29296,7 @@ var render = function() {
               _c(
                 "span",
                 { staticClass: "Left-arrowBtn", on: { click: _vm.previous } },
-                [_vm._v("«")]
+                [_vm._v("<")]
               ),
               _vm._v(" "),
               _c("span", { staticClass: "slide-counter" }, [
@@ -29310,7 +29310,7 @@ var render = function() {
               _c(
                 "span",
                 { staticClass: "Right-arrowBtn", on: { click: _vm.next } },
-                [_vm._v("»")]
+                [_vm._v(">")]
               )
             ]),
             _vm._v(" "),
@@ -38644,4 +38644,4 @@ window.OCA.NMC_Welcome_Popup.Modal = {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=c31daecb039b11f1b372
+//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=a016e8b6ed09aa614717
