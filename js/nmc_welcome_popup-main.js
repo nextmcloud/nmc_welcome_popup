@@ -29250,12 +29250,10 @@ var render = function() {
                     }
                   }),
                   _vm._v(" "),
-                  _vm.isLast
-                    ? _c("button", {
-                        staticClass: "primary modal-default-button",
-                        on: { click: _vm.close }
-                      })
-                    : _vm._e()
+                  _c("button", {
+                    staticClass: "primary modal-default-button",
+                    on: { click: _vm.close }
+                  })
                 ])
               ])
             : _vm._e(),
@@ -38644,4 +38642,4 @@ window.OCA.NMC_Welcome_Popup.Modal = {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=a016e8b6ed09aa614717
+//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=10605354eb79a8dc352a
