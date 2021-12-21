@@ -18,7 +18,7 @@ document.querySelector('body').appendChild(el)
 const View = Vue.extend(App)
 const vm = new View().$mount(el)
 
-window.OCA.NMC_Welcome_Popup = {
+window.OCA.NMC_Welcome_Popup.Modal = {
 	open: vm.open,
 	previewSlide: vm.previewSlide
 }

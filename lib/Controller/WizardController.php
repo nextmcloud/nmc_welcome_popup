@@ -109,11 +109,11 @@ class WizardController extends Controller {
 
 		// echo $this->l10nFactory->findLanguage();exit;
 		$language = $this->l10nFactory->findLanguage();
-		$imageURL = $this->imageManager->getImageUrl('welcome_image');
 
 		$slides = [];
 		$slideArray = json_decode($this->config->getAppValue('nmc_welcome_popup', 'welcome_slides', '0'), true);
-		foreach($slideArray as $slide){
+		foreach($slideArray as $id=>$slide){
+			$imageURL = $this->imageManager->getImageUrl('welcome_image_'.$id);
 			$slides[] = array_merge($slide["$language"],array('image_url' => $imageURL));
 		}
 

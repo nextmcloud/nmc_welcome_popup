@@ -21,76 +21,121 @@
 
 namespace OCA\NMC_Welcome_Popup;
 
-use OCP\App\IAppManager;
-use OCP\Files\IAppData;
-use OCP\Files\NotFoundException;
-use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IConfig;
+use OCP\IURLGenerator;
 
 class SlideManager {
 
 	/** @var IConfig */
 	protected $config;
 
-	/** @var IAppManager */
-	protected $appManager;
-
-	/** @var IAppData */
-	protected $appData;
-
-	/** @var ImageManager */
-	private $imageManager;
-
+	/** @var IURLGenerator */
+	private $urlGenerator;
 
 	public function __construct(IConfig $config,
-								IAppManager $appManager,
-								ImageManager $imageManager,
-								IAppData $appData) {
+								IURLGenerator $urlGenerator) {
 		$this->config = $config;
-		$this->appManager = $appManager;
-		$this->imageManager = $imageManager;
-		$this->appData = $appData;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
+	 * @param int $popUpId
+	 * @param int $slideId
 	 * @return array[]
 	 */
-	public function getSlidesToDisplay() {
-		$slides = $this->getSlides();
+	public function getSlidesToDisplay($popUpId, $slideId) {
+		$popUp = $this->getPopUp($popUpId);
+		$slides = $popUp['slides'];
+		$quota = $popUp['quota'];
 
 		$langSlides = [];
-		foreach ($slides as $id => $langSlide) {
-			$langSlides = $langSlide;
+		if (isset($slides[$slideId])) {
+			$langSlides = $slides[$slideId];
+			$langSlides['quota'] = $quota;
 		}
 
 		return $langSlides;
 	}
 
 	/**
+	 * @param int $popUpId
 	 * @return array[]
 	 */
-	public function getSlides() {
+	public function getSlides($popUpId) {
 		$jsonEncodedList = $this->config->getAppValue('nmc_welcome_popup', 'welcome_slides', '');
-		$slides = json_decode($jsonEncodedList, true);
-		if (!is_array($slides) || empty($slides)) {
+		$popUps = json_decode($jsonEncodedList, true);
+		if (!is_array($popUps) || empty($popUps[$popUpId]['slides'])) {
 			return [];
 		}
 
-		return $slides;
+		return $popUps[$popUpId]['slides'];
 	}
 
 	/**
-	 * @param array $slide
-	 * @return array
-	 * @throws InvalidIDException
+	 * @return array[]
 	 */
-	public function addSlide($slide) {
-		$slideNo = 1;
+	public function getPopUps() {
+		$jsonEncodedList = $this->config->getAppValue('nmc_welcome_popup', 'welcome_slides', '');
+		$popUps = json_decode($jsonEncodedList, true);
+		if (!is_array($popUps) || empty($popUps)) {
+			return [];
+		}
 
-		$slides[$slideNo] = $slide;
-		$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', json_encode($slides));
+		return $popUps;
+	}
 
-		return $slides[$slideNo];
+	/**
+	 * @param int $popUpId
+	 * @return array[]
+	 */
+	public function getPopUp($popUpId) {
+		$jsonEncodedList = $this->config->getAppValue('nmc_welcome_popup', 'welcome_slides', '');
+		$popUps = json_decode($jsonEncodedList, true);
+		if (!is_array($popUps) || empty($popUps[$popUpId])) {
+			return [];
+		}
+
+		return $popUps[$popUpId];
+	}
+
+	/**
+	 * @param int $popUpId
+	 * @param int $slideId
+	 * @param array $slide
+	 * @param array $quota
+	 * @return array
+	 */
+	public function addSlide($popUpId, $slideId, $slide, $quota) {
+		$popUps = $this->getPopUps();
+		$popUps[$popUpId]['slides'][$slideId] = $slide;
+		$popUps[$popUpId]['quota'] = $quota;
+		$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', json_encode($popUps));
+
+		return $popUps[$popUpId]['slides'][$slideId];
+	}
+
+	/**
+	 * @param int $popUpId
+	 * @param int $slideId
+	 * @return array
+	 */
+	public function removeSlide($popUpId, $slideId) {
+		$popUps = $this->getPopUps();
+		if (isset($popUps[$popUpId]['slides'][$slideId])) {
+			$slide = $popUps[$popUpId]['slides'][$slideId];
+			unset($popUps[$popUpId]['slides'][$slideId]);
+		} else {
+			$slide = [];
+		}
+		if (empty($popUps[$popUpId]['slides'])) {
+			unset($popUps[$popUpId]);
+		}
+		if (!empty($popUps)) {
+			$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', json_encode($popUps));
+		} else {
+			$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', '');
+		}
+		return $slide;
 	}
 
 }
