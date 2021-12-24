@@ -195,7 +195,7 @@ class SlideController extends Controller {
 		$csp->allowInlineStyle();
 		$response->setContentSecurityPolicy($csp);
 		$response->cacheFor(3600);
-		$response->addHeader('Content-Type', $this->config->getAppValue($this->appName, $key . '_mime', ''));
+		// $response->addHeader('Content-Type', $this->config->getAppValue($this->appName, $key . '_mime', ''));
 		$response->addHeader('Content-Disposition', 'attachment; filename="' . $key . '"');
 		$response->addHeader('Content-Type', $this->config->getAppValue($this->appName, $key . '_mime', ''));
 		return $response;
