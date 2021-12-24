@@ -279,7 +279,7 @@ class SlideController extends Controller {
 	 * @return DataResponse
 	 */
 	public function deleteImage(string $key, int $slideId) {
-		$this->unsetImageParam($key, $slideId);
+		$this->unsetImageParam($slideId);
 		$this->deleteImageValues($key);
 		try {
 			$this->imageManager->delete($key);
@@ -337,11 +337,10 @@ class SlideController extends Controller {
 
 	/**
 	 *
-	 * @param string $key
 	 * @param int $slideId
 	 * @return array[]
 	 */
-	private function unsetImageParam(string $key, int $slideId) {
+	public function unsetImageParam(int $slideId) {
 		$slide = $this->slideManager->getSlidesToDisplay($slideId);
 		if (is_array($slide) && !empty($slide)) {
 			$slide['image_uploaded'] = "";
@@ -350,7 +349,7 @@ class SlideController extends Controller {
 		return $slide;
 	}
 
-	private function deleteImageValues(string $key) {
+	public function deleteImageValues(string $key) {
 		$this->config->deleteAppValue($this->appName, $key . '_mime');
 		$this->config->deleteAppValue($this->appName, $key . '_cachebuster');
 	}
