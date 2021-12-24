@@ -49,6 +49,9 @@ class SlideControllerTest extends TestCase {
 	/** @var SlideController */
 	private $controller;
 
+	/** @var IRequest|\PHPUnit\Framework\MockObject\MockObject */
+	protected $request;
+
 	/** @var IConfig|\PHPUnit\Framework\MockObject\MockObject */
 	protected $config;
 
@@ -70,6 +73,7 @@ class SlideControllerTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
+		$this->request = $this->createMock(IRequest::class);
 		$this->config = $this->createMock(IConfig::class);
 		$this->slideManager = $this->createMock(SlideManager::class);
 		$this->imageManager = $this->createMock(ImageManager::class);
@@ -79,7 +83,7 @@ class SlideControllerTest extends TestCase {
 
 		$this->controller = new SlideController(
 			'nmc_welcome_popup',
-			$this->createMock(IRequest::class),
+			$this->request,
 			$this->config,
 			$this->slideManager,
 			$this->imageManager,
@@ -132,8 +136,9 @@ class SlideControllerTest extends TestCase {
 		$this->l10n
 			->expects($this->once())
 			->method('t')
-			->with('Saved')
-			->willReturn('Saved');
+			->willReturnCallback(function ($str) {
+				return $str;
+			});
 
 		$expected = new DataResponse (
 			[
@@ -258,5 +263,227 @@ class SlideControllerTest extends TestCase {
 		@$this->assertEquals($expected, $this->controller->getImage('welcome_image_1'));
 	}
 
+	public function testUploadImageNoData() {
+		$this->request
+			->expects($this->once())
+			->method('getParam')
+			->with('key')
+			->willReturn('welcome_image_1');
+		$this->request
+			->expects($this->once())
+			->method('getUploadedFile')
+			->with('image')
+			->willReturn(null);
+		$this->l10n
+			->expects($this->any())
+			->method('t')
+			->willReturnCallback(function ($str) {
+				return $str;
+			});
+
+		$expected = new DataResponse(
+			[
+				'data' =>
+					[
+						'message' => 'No file uploaded',
+					],
+				'status' => 'failure',
+			],
+			Http::STATUS_UNPROCESSABLE_ENTITY
+		);
+
+		$this->assertEquals($expected, $this->controller->uploadImage());
+	}
+
+	public function testUploadImageInvalidMimeType() {
+		$this->request
+			->expects($this->once())
+			->method('getParam')
+			->with('key')
+			->willReturn('welcome_image_1');
+		$this->request
+			->expects($this->once())
+			->method('getUploadedFile')
+			->with('image')
+			->willReturn([
+				'tmp_name' => __DIR__  . '/../../../../../tests/data/lorem.txt',
+				'type' => 'application/pdf',
+				'name' => 'welcome_image.pdf',
+				'error' => 0,
+			]);
+		$this->l10n
+			->expects($this->any())
+			->method('t')
+			->willReturnCallback(function ($str) {
+				return $str;
+			});
+
+		$this->imageManager->expects($this->once())
+			->method('updateImage')
+			->willThrowException(new \Exception('Unsupported image type'));
+
+		$expected = new DataResponse(
+			[
+				'data' =>
+					[
+						'message' => 'Unsupported image type',
+					],
+				'status' => 'failure'
+			],
+			Http::STATUS_UNPROCESSABLE_ENTITY
+		);
+
+		$this->assertEquals($expected, $this->controller->uploadImage());
+	}
+
+	public function dataUpdateImages() {
+		return [
+			['image/jpeg', false],
+			['image/jpeg', true],
+			['image/gif'],
+			['image/png'],
+			['image/svg+xml'],
+			['image/svg']
+		];
+	}
+
+	/** @dataProvider dataUpdateImages */
+	public function testUpdateImageNormalImageUpload($mimeType, $folderExists = true) {
+		$tmpImage = \OC::$server->getTempManager()->getTemporaryFolder() . '/welcome_image.svg';
+		$destination = \OC::$server->getTempManager()->getTemporaryFolder();
+
+		touch($tmpImage);
+		copy(__DIR__ . '/../../../../../tests/data/testimage.png', $tmpImage);
+		$this->request
+			->expects($this->once())
+			->method('getParam')
+			->with('key')
+			->willReturn('welcome_image_1');
+		$this->request
+			->expects($this->once())
+			->method('getUploadedFile')
+			->with('image')
+			->willReturn([
+				'tmp_name' => $tmpImage,
+				'type' => $mimeType,
+				'name' => 'welcome_image.svg',
+				'error' => 0,
+			]);
+		$this->l10n
+			->expects($this->any())
+			->method('t')
+			->willReturnCallback(function ($str) {
+				return $str;
+			});
+
+		$this->config
+			->expects($this->once())
+			->method('setAppValue')
+			->with('nmc_welcome_popup', 'welcome_image_1_mime', $mimeType);
+
+		$this->imageManager->expects($this->once())
+			->method('getImageUrl')
+			->with('welcome_image_1')
+			->willReturn('imageUrl');
+
+		$this->imageManager->expects($this->once())
+			->method('updateImage')
+			->willReturn($mimeType);
+
+		$expected = new DataResponse(
+			[
+				'data' =>
+					[
+						'name' => 'welcome_image.svg',
+						'imgMime' => $mimeType,
+						'url' => 'imageUrl',
+						'image' => 'welcome_image_1',
+						'message' => 'Saved',
+					],
+				'status' => 'success'
+			]
+		);
+
+		$this->assertEquals($expected, $this->controller->uploadImage());
+	}
+
+	public function dataPhpUploadErrors() {
+		return [
+			[UPLOAD_ERR_INI_SIZE, 'The uploaded file exceeds the upload_max_filesize directive in php.ini'],
+			[UPLOAD_ERR_FORM_SIZE, 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form'],
+			[UPLOAD_ERR_PARTIAL, 'The file was only partially uploaded'],
+			[UPLOAD_ERR_NO_FILE, 'No file was uploaded'],
+			[UPLOAD_ERR_NO_TMP_DIR, 'Missing a temporary folder'],
+			[UPLOAD_ERR_CANT_WRITE, 'Could not write file to disk'],
+			[UPLOAD_ERR_EXTENSION, 'A PHP extension stopped the file upload'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataPhpUploadErrors
+	 */
+	public function testUpdateImageUploadWithInvalidImageUpload($error, $expectedErrorMessage) {
+		$this->request
+			->expects($this->once())
+			->method('getParam')
+			->with('key')
+			->willReturn('welcome_image_1');
+		$this->request
+			->expects($this->once())
+			->method('getUploadedFile')
+			->with('image')
+			->willReturn([
+				'tmp_name' => '',
+				'type' => 'text/svg',
+				'name' => 'welcome_image.svg',
+				'error' => $error,
+			]);
+		$this->l10n
+			->expects($this->any())
+			->method('t')
+			->willReturnCallback(function ($str) {
+				return $str;
+			});
+
+		$expected = new DataResponse(
+			[
+				'data' =>
+					[
+						'message' => $expectedErrorMessage
+					],
+				'status' => 'failure'
+			],
+			Http::STATUS_UNPROCESSABLE_ENTITY
+		);
+		$this->assertEquals($expected, $this->controller->uploadImage());
+	}
+
+	/**
+	 * @dataProvider dataAddSlideWithNoError
+	 * @param $slideArray
+	 * @param $slideId
+	 */
+	public function testUnsetImageParam($slideArray, $slideId) {
+		$slide = $slideArray[$slideId];
+		$slide['image_uploaded'] = "";
+		$this->slideManager->expects($this->once())
+			->method('getSlidesToDisplay')
+			->with($slideId)
+			->willReturn($slideArray[$slideId]);
+		$this->slideManager
+			->expects($this->once())
+			->method('addSlide')
+			->with($this->equalTo($slideId), $this->equalTo($slide))
+			->willReturn(true);
+
+		$this->assertTrue($this->controller->unsetImageParam($slideId));
+	}
+
+	public function testDeleteImageValues() {
+		$this->config->expects($this->exactly(2))
+			->method('deleteAppValue')->withConsecutive(['nmc_welcome_popup', 'welcome_image_1_mime'], ['nmc_welcome_popup', 'welcome_image_1_cachebuster'])
+			->willReturnOnConsecutiveCalls(true, true);
+		$this->controller->deleteImageValues('welcome_image_1');
+	}
 
 }
