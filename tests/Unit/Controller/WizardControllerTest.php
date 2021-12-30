@@ -110,16 +110,16 @@ class WizardControllerTest extends TestCase {
 				"en_GB" => [
 					"title" => "English title slide 1",
 					"primary_button_label" => "English primary button slide 1",
-					"primary_button_url" => "http://localhost/index.php/settings/admin/nmc_welcome_popup/slide2/en",
+					"primary_button_url" => "http://localhost/index.php/settings/admin/nmc_welcome_popup/slide1/en",
 					"secondary_button_desc" => "English secondary button desc slide 1",
-					"content" => "vms,v s,vms,vms,vms,vmsv"
+					"content" => "English content 1"
 				],
 				"de_DE" => [
 					"title" => "Deutsch title slide 1",
 					"primary_button_label" => "Deutsch primary button slide 1",
-					"primary_button_url" => "http://localhost/index.php/settings/admin/nmc_welcome_popup/slide2/de",
+					"primary_button_url" => "http://localhost/index.php/settings/admin/nmc_welcome_popup/slide1/de",
 					"secondary_button_desc" => "Deutsch secondary button desc slide 1",
-					"content" => "cakcnkanvkavnkav"
+					"content" => "Deutsch content 1"
 				],
 				"image_uploaded" => "welcome_image_1"
 			],
@@ -127,16 +127,16 @@ class WizardControllerTest extends TestCase {
 				"en_GB" => [
 					"title" => "English title slide 3",
 					"primary_button_label" => "English primary button slide 3",
-					"primary_button_url" => "http => //localhost/index.php/settings/admin/nmc_welcome_popup/slide2/en",
+					"primary_button_url" => "http => //localhost/index.php/settings/admin/nmc_welcome_popup/slide3/en",
 					"secondary_button_desc" => "English secondary button desc slide 3",
-					"content" => "mcs,vsvs v sv slvls vlks vl sklv klsv"
+					"content" => "English content 3"
 				],
 				"de_DE" => [
 					"title" => "Deutsch title slide 3",
 					"primary_button_label" => "Deutsch primary button slide 3",
-					"primary_button_url" => "http://localhost/index.php/settings/admin/nmc_welcome_popup/slide2/de",
+					"primary_button_url" => "http://localhost/index.php/settings/admin/nmc_welcome_popup/slide3/de",
 					"secondary_button_desc" => "Deutsch secondary button desc slide 3",
-					"content" => "a,vksmnkvs vksvjlks vls vlsv"
+					"content" => "Deutsch content 3"
 				],
 				"image_uploaded" => "welcome_image_3"
 			]
@@ -173,12 +173,8 @@ class WizardControllerTest extends TestCase {
 			}))
 		]);
 		$response = $controller->show();
-		
-		$this->assertInstanceOf(JSONResponse::class, $response);
-		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+
 		$this->assertEquals($expected, $response);
-		$response = $response->getData();
-		$this->assertCount(2, $response['slides']);
 	}
 
 }
