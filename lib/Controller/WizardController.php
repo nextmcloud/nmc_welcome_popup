@@ -87,7 +87,8 @@ class WizardController extends Controller {
 	 * @return DataResponse
 	 */
 	public function disable() {
-		$this->config->setUserValue($this->userId, 'nmc_welcome_popup', 'show', 0);
+		$version = $this->config->getAppValue('nmc_welcome_popup', 'version', '');
+		$this->config->setUserValue($this->userId, 'nmc_welcome_popup', 'show', $version);
 		return new DataResponse();
 	}
 

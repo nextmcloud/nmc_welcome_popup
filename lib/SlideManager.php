@@ -75,6 +75,9 @@ class SlideManager {
 		$slides[$slideId] = $slide;
 		$this->config->setAppValue('nmc_welcome_popup', 'welcome_slides', json_encode($slides));
 
+		$version = $this->config->getAppValue('nmc_welcome_popup', 'version', '');
+		$this->config->setAppValue('nmc_welcome_popup', 'version', ++$version);
+
 		return $slides[$slideId];
 	}
 
