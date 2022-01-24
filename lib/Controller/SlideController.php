@@ -148,7 +148,7 @@ class SlideController extends Controller {
 		}
 
 		$this->slideManager->addSlide($slideId, $slide);
-		$this->config->deleteAppFromAllUsers($this->appName);
+		// $this->config->deleteAppFromAllUsers($this->appName);
 
 		return new DataResponse (
 			[
