@@ -164,10 +164,10 @@ class SlideControllerTest extends TestCase {
 			->method('addSlide')
 			->with($slideId, $slideArray[$slideId])
 			->willReturn($slideArray[$slideId]);
-		$this->config
-			->expects($this->once())
-			->method('deleteAppFromAllUsers')
-			->with('nmc_welcome_popup');
+		// $this->config
+		// 	->expects($this->once())
+		// 	->method('deleteAppFromAllUsers')
+		// 	->with('nmc_welcome_popup');
 		$this->l10n
 			->expects($this->once())
 			->method('t')

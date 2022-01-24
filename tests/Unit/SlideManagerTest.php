@@ -195,7 +195,13 @@ class SlideManagerTest extends TestCase {
 		$this->config->expects($this->once())
 			->method('setAppValue')
 			->with('nmc_welcome_popup', 'welcome_slides', json_encode($slides));
+		
 		$this->assertEquals($slides[$slideId], $this->slideManager->addSlide($slideId, $slide));
+
+		$this->config->expects($this->once())
+			->method('getAppValue')
+			->with('nmc_welcome_popup', 'version', '')
+			->willReturn('1');
 	}
 
 	/**

@@ -36,6 +36,7 @@ use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IConfig;
+use OCP\ILogger;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -56,23 +57,28 @@ class ImageManagerTest extends TestCase {
 	private $folder;
 	/** @var ISimpleFile|\PHPUnit\Framework\MockObject\MockObject */
 	private $file;
+	/** @var ILogger */
+	private $logger;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$this->config = $this->createMock(IConfig::class);
 		$this->appData = $this->createMock(IAppData::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
+		$this->logger = $this->createMock(ILogger::class);
 		$this->imageManager = new ImageManager(
 			$this->config,
 			$this->appData,
-			$this->urlGenerator
+			$this->urlGenerator,
+			$this->logger
 		);
 		$this->imageManagerMock = $this->getMockBuilder(ImageManager::class)
 			->setMethods(['delete'])
 			->setConstructorArgs([
 				$this->config,
 				$this->appData,
-				$this->urlGenerator
+				$this->urlGenerator,
+				$this->logger
 			])
 			->getMock();
 		$this->folder = $this->createMock(ISimpleFolder::class);
