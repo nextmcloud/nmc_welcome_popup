@@ -29300,7 +29300,7 @@ var render = function() {
               _c("span", { staticClass: "slide-counter" }, [
                 _vm._v(
                   _vm._s(this.currentSlide + 1) +
-                    " of " +
+                    _vm._s(_vm.t("nmc_welcome_popup", " of ")) +
                     _vm._s(_vm.slideList.length)
                 )
               ]),
@@ -38642,4 +38642,4 @@ window.OCA.NMC_Welcome_Popup.Modal = {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=10605354eb79a8dc352a
+//# sourceMappingURL=nmc_welcome_popup-main.js.map?v=238f0d5e5706f3742dcd

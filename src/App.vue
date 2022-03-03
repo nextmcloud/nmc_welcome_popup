@@ -32,7 +32,7 @@
 		<div class="modal-footer">
 			<div class="pagination">
 				<span class="Left-arrowBtn" @click="previous">&lt;</span>
-				<span class="slide-counter">{{ this.currentSlide + 1 }} of {{ slideList.length }}</span>
+				<span class="slide-counter">{{ this.currentSlide + 1 }}{{ t('nmc_welcome_popup', ' of ') }}{{ slideList.length }}</span>
 				<span class="Right-arrowBtn" @click="next">&gt;</span>
 			</div>
 			<div class="footer-actions">
