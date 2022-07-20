@@ -1,4 +1,5 @@
 { "translations": {
-    "News" : "Neuigkeiten"
+    "News" : "Neuigkeiten",
+    " of " : " von "
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
