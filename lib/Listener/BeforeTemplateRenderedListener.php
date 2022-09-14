@@ -83,6 +83,6 @@ class BeforeTemplateRenderedListener implements IEventListener {
 		}
 		$this->appHint->sendAppHintNotifications();
 
-		\OC_Util::addScript('nmc_welcome_popup', 'about');
+		\OCP\Util::addScript('nmc_welcome_popup', 'about');
 	}
 }

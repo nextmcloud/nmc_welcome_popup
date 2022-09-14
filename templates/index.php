@@ -1,6 +1,6 @@
 <?php
-script('nmc_welcome_popup', 'script');
-style('nmc_welcome_popup', 'style');
+// script('nmc_welcome_popup', 'script');
+// style('nmc_welcome_popup', 'style');
 ?>
 
 <div id="app">
