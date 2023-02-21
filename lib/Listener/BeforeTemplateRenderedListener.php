@@ -78,10 +78,7 @@ class BeforeTemplateRenderedListener implements IEventListener {
 		$version = $this->config->getAppValue('nmc_welcome_popup', 'version', '');
 		if ($this->config->getUserValue($user->getUID(), 'nmc_welcome_popup', 'show', '1') !== $version) {
 			\OC_Util::addScript('nmc_welcome_popup', 'activate');
-
-			$this->jobList->add('OCA\NMC_Welcome_Popup\Notification\BackgroundJob', ['uid' => $this->userSession->getUser()->getUID()]);
 		}
-		$this->appHint->sendAppHintNotifications();
 
 		\OC_Util::addScript('nmc_welcome_popup', 'about');
 	}
