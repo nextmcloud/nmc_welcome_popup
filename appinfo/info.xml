@@ -12,7 +12,7 @@
     <category>tools</category>
     <bugs>http://abc.com</bugs>
     <dependencies>
-        <nextcloud min-version="21" max-version="24"/>
+        <nextcloud min-version="21" max-version="25"/>
     </dependencies>
     <navigations>
 		<navigation>

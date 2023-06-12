@@ -252,6 +252,8 @@
 </style>
 
 <style lang="scss" scoped>
+	@import './css/style.scss';
+	
 	.modal-mask {
 		background-color: rgba(0, 0, 0, 0.7);
 
@@ -359,6 +361,7 @@
 		opacity: 0;
 	}
 </style>
+
 <script>
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import axios from '@nextcloud/axios'
