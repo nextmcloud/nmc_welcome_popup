@@ -49,7 +49,194 @@
 </template>
 <style lang="scss">
 	/* Page styling needs to be unscoped, since we load it separately from the server */
+	.modal-mask {
+		background-color: rgba(0, 0, 0, 0.7);
+
+		&::v-deep .modal-wrapper {
+			position: relative;
+		}
+
+		&::v-deep .modal-container {
+			display: flex;
+			flex-direction: column;
+			height: 95% !important;
+			width: 95% !important;
+			max-width: 900px;
+			max-height: 650px !important;
+			position: relative;
+		}
+	}
+
 	#nmc_welcome_popup {
+		.modal-wrapper {
+			.modal-header {
+				overflow: hidden;
+				flex-shrink: 0;
+				height: unset;
+				max-height: 150px;
+				.nmc_welcome_popup-header {
+					background-color: var(--white-color);
+					background-image: unset;
+					padding: 1.5rem;
+					h2 {
+						float: left;
+						color: var(--scl-color-grey-90);
+						font-weight: bold;
+						padding: 0;
+						margin: 0;
+						text-align: left;
+						line-height: 1.23;
+					}
+					button.primary.modal-default-button {
+						background: var(--icon-dialog-close);
+						background-repeat: no-repeat;
+						border: unset;
+						width: 24px;
+						height: 24px;
+						padding: unset;
+						float: right;
+						margin: unset;
+					}
+				}
+			}
+			
+			.modal-body {
+				padding: 0 1.5rem;
+				flex-grow: 1;
+				overflow-x: hidden;
+				overflow-y: auto;
+				& > div {
+					flex-grow: 1;
+					align-items: center;
+					justify-content: center;
+				}
+				.logo {
+					background-size: cover;
+					width: unset;
+					height: unset;
+					max-height: unset;
+					margin: unset;
+					img {
+						width: 100%;
+						height: auto;
+						display: block;
+						margin-left: auto;
+						margin-right: auto;
+						padding-top: 0.25rem;
+					}
+				}
+				.content {
+					padding: 1.25rem 0rem;
+					color:var(--scl-color-grey-90);
+				}
+			}
+			.modal-footer {
+				display: flex;
+				width: 100%;
+				margin: 2rem 1.5rem 1.5rem 0rem;
+				overflow: unset;
+				position: unset;
+				justify-content: space-between;
+				text-align: right;
+				button {
+					margin: 10px;
+				}
+				.pagination {
+					margin-left: 1.5rem;
+					float: left;
+					width: 200px;
+					height: 40px;
+					opacity: 0.6;
+					span {
+						float: left;
+						padding: 0.5rem;
+					}
+					.slide-counter {
+						border-top: 1px solid #666666;
+						border-bottom: 1px solid #666666;
+					}
+					.Left-arrowBtn {
+						border: 1px solid #666666;
+						border-top-left-radius: 8px;
+						border-bottom-left-radius: 8px;
+						cursor: pointer;
+						&:hover {
+							border-color: var(--color-background-plain);
+							color: var(--color-background-plain);
+						}
+					}
+					.Right-arrowBtn {
+						&:hover {
+							border-color: var(--color-background-plain);
+							color: var(--color-background-plain);
+						}
+						border: 1px solid #666666;
+						border-top-right-radius: 8px;
+						border-bottom-right-radius: 8px;
+						cursor: pointer;
+					}
+				}
+				.footer-actions {
+					button {
+						margin: 0;
+					}
+					margin-right: 1.5rem;
+					overflow: unset;
+					position: unset;
+					justify-content: space-between;
+					text-align: right;
+					button.primary {
+						border-radius: 8px;
+						font-size: 1rem;
+						font-weight: normal;
+						padding: 0.375rem 1.5rem 0.5rem 1.5rem;
+						height: 40px;
+						background-color: unset;
+						border-color: var(--scl-color-grey-90);
+						margin: 0 0.5rem 0 0;
+						color: var(--scl-color-grey-90);
+						width: auto;
+						max-width: 180px;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						overflow: hidden;
+						vertical-align: middle;
+						line-height: 1.23;
+						&:hover {
+							border-color: var(--color-background-plain);
+							color: var(--color-background-plain);
+							background-color: var(--white-color);
+						}
+					}
+				}
+				a.button {
+					background-color: var(--color-background-plain);
+					border-color: var(--color-background-plain);
+					color: var(--white-color);
+					border-radius: 8px;
+					padding: 0.625rem 1.5rem;
+					height: 40px;
+					font-size: 1rem;
+					font-weight: normal;
+					width: auto;
+					max-width: 180px;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					overflow: hidden;
+					vertical-align: middle;
+					display: inline-block;
+					line-height: 1.23;
+					&:hover {
+						background-color: var(--scl-color-light-magenta);
+					}
+				}
+			}
+		}
+
+		.modal-default-button {
+			align-self: flex-end;
+		}
+	
 		.header-close {
 			display: none;
 		}
@@ -251,9 +438,7 @@
 	}
 </style>
 
-<style lang="scss" scoped>
-	@import './css/style.scss';
-	
+<style lang="scss" scoped>	
 	.modal-mask {
 		background-color: rgba(0, 0, 0, 0.7);
 
@@ -284,56 +469,9 @@
 				justify-content: center;
 			}
 
-			.logo {
-				// background: var(--image-logo) no-repeat center;
-				background-size: contain;
-				width: 175px;
-				height: 100px;
-				max-height: 20vh;
-				margin: 0 auto;
-			}
 		}
 	}
 
-	.modal-header {
-		height: 180px;
-		max-height: 40vh;
-		overflow: hidden;
-		flex-shrink: 0;
-
-		.nmc_welcome_popup-header {
-			padding: 20px 12px;
-			background: var(--color-primary) var(--image-login-background) no-repeat 50% 50%;
-			background-size: cover;
-			color: var(--color-primary-text);
-			text-align: center;
-			h2 {
-				font-size: 20px;
-				margin-top: 7px;
-				line-height: 150%;
-				color: var(--color-primary-text);
-				font-weight: 300;
-				padding: 0 0 10px;
-			}
-		}
-	}
-
-	.modal-default-button {
-		align-self: flex-end;
-	}
-
-	.modal-footer {
-		overflow: hidden;
-		position: absolute;
-		display: flex;
-		bottom: 0;
-		right: 0;
-		width: 100%;
-	}
-
-	.modal-footer button {
-		margin: 10px;
-	}
 
 	/* Transitions */
 	.next-enter-active, .next-leave-active,
