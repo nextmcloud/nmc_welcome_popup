@@ -59,10 +59,10 @@
 		&::v-deep .modal-container {
 			display: flex;
 			flex-direction: column;
-			height: 95% !important;
-			width: 95% !important;
+			height: 95%;
+			width: 95%;
 			max-width: 900px;
-			max-height: 650px !important;
+			max-height: 650px;
 			position: relative;
 		}
 	}
@@ -409,6 +409,9 @@
 
 	@media only screen and (max-width: 680px) {
 		#nmc_welcome_popup {
+			.modal-container {
+				border-radius: 12px;
+			}
 			.nmc_welcome_popup-header div.logo {
 				background-size: 120px;
 			}
