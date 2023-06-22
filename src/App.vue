@@ -410,8 +410,12 @@
 	@media only screen and (max-width: 680px) {
 		#nmc_welcome_popup {
 			.modal-container {
+				max-height:420px;
 				border-radius: 12px;
-			}
+				.modal-footer {
+					display: inline-block;
+				} 
+			} 
 			.nmc_welcome_popup-header div.logo {
 				background-size: 120px;
 			}
