@@ -76,10 +76,13 @@ class BeforeTemplateRenderedListener implements IEventListener {
 		}
 
 		$version = $this->config->getAppValue('nmc_welcome_popup', 'version', '');
-		if ($this->config->getUserValue($user->getUID(), 'nmc_welcome_popup', 'show', '1') !== $version) {
-			\OC_Util::addScript('nmc_welcome_popup', 'activate');
+		$show = $this->config->getUserValue($user->getUID(), 'nmc_welcome_popup', 'show', '1');
+
+		if ($show !== $version) {
+			\OC_Util::addScript('nmc_welcome_popup', 'nmc_welcome_popup-activate');
 		}
 
-		\OCP\Util::addScript('nmc_welcome_popup', 'about');
+		\OCP\Util::addScript('nmc_welcome_popup', 'nmc_welcome_popup-about');
+		\OCP\Util::addStyle('nmc_welcome_popup', 'style');
 	}
 }

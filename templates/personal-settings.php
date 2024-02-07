@@ -23,8 +23,8 @@
 
 /** @var \OCP\Defaults $theme */
 /** @var array $_ */
-style('nmc_welcome_popup', ['personalsettings']);
-script('nmc_welcome_popup', ['personalsettings']);
+style('nmc_welcome_popup', ['personal-settings']);
+script('nmc_welcome_popup', ['nmc_welcome_popup-personal-settings']);
 ?>
 
 <div id="clientsbox" class="section clientsbox">

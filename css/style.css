@@ -1,3 +1,14 @@
 #hello {
 	color: red;
 }
+
+#nmc_welcome_popup .modal-wrapper--normal .modal-container {
+    width: 680px;
+}
+
+#nmc_welcome_popup-about button img {
+    height: 24px;
+	margin: 0 10px 0 4px;
+	opacity: 1;
+    width: 24px;
+}
