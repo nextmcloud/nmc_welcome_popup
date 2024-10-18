@@ -1,18 +1,17 @@
 <?xml version="1.0"?>
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>nmc_welcome_popup</id>
-    <name>NMC Welcome Popup</name>
+    <name>MagentaCloud Welcome Popup</name>
     <summary>general</summary>
     <description><![CDATA[general]]></description>
-    <version>0.0.1</version>
+    <version>1.1.1</version>
     <licence>agpl</licence>
     <author mail="yogesh.shejwadkar@t-systems.com" >Yogesh Shejwadkar</author>
     <namespace>NMC_Welcome_Popup</namespace>
     <category>tools</category>
-    <bugs>http://abc.com</bugs>
     <dependencies>
-        <nextcloud min-version="21" max-version="24"/>
+    	<nextcloud min-version="21" max-version="30"/>
     </dependencies>
     <navigations>
 		<navigation>
@@ -23,10 +22,9 @@
 			<icon>content-news.svg</icon>
 			<type>settings</type>
 		</navigation>
-	</navigations>
+    </navigations>
     <settings>
-		<personal>OCA\NMC_Welcome_Popup\Settings\Personal</personal>
-    <admin>OCA\NMC_Welcome_Popup\Settings\Admin</admin>
+		<admin>OCA\NMC_Welcome_Popup\Settings\Admin</admin>
 		<admin-section>OCA\NMC_Welcome_Popup\Settings\Section</admin-section>
-	</settings>
+    </settings>
 </info>

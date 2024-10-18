@@ -22,7 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-script('nmc_welcome_popup', 'settings-admin');
+script('nmc_welcome_popup', 'nmc_welcome_popup-settings-admin');
 style('nmc_welcome_popup', 'settings-admin');
 
 $en = 'en_GB';
