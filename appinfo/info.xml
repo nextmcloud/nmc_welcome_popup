@@ -5,13 +5,13 @@
     <name>MagentaCloud Welcome Popup</name>
     <summary>general</summary>
     <description><![CDATA[general]]></description>
-    <version>0.1.1</version>
+    <version>1.1.1</version>
     <licence>agpl</licence>
     <author mail="yogesh.shejwadkar@t-systems.com" >Yogesh Shejwadkar</author>
     <namespace>NMC_Welcome_Popup</namespace>
     <category>tools</category>
     <dependencies>
-    	<nextcloud min-version="21" max-version="27"/>
+    	<nextcloud min-version="21" max-version="30"/>
     </dependencies>
     <navigations>
 		<navigation>
