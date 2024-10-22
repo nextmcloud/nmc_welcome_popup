@@ -83,6 +83,7 @@ class BeforeTemplateRenderedListener implements IEventListener {
 		}
 
 		\OCP\Util::addScript('nmc_welcome_popup', 'nmc_welcome_popup-about');
+		\OCP\Util::addStyle('nmc_welcome_popup', 'nmc_welcome_popup-style');
 		\OCP\Util::addStyle('nmc_welcome_popup', 'style');
 	}
 }

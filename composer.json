@@ -1,6 +1,6 @@
 {
-    "name": "NMC Welcome Popup",
-    "description": "general",
+    "name": "nextmcloud/nmc_welcome_popup",
+    "description": "MagentaCloud Welcome Popup",
     "type": "project",
     "license": "AGPL",
     "authors": [
@@ -14,7 +14,7 @@
     },
     "require": {},
     "require-dev": {
-        "phpunit/phpunit": "^5.4"
+        "phpunit/phpunit": "^9.6"
     },
     "scripts": {
         "lint": "find . -name \\*.php -not -path './vendor/*' -print0 | xargs -0 -n1 php -l"

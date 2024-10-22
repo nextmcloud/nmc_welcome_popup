@@ -22,8 +22,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-script('nmc_welcome_popup', 'nmc_welcome_popup-settings-admin');
-style('nmc_welcome_popup', 'settings-admin');
+style('nmc_welcome_popup', 'admin-settings');
+script('nmc_welcome_popup', 'nmc_welcome_popup-admin-settings');
 
 $en = 'en_GB';
 $de = 'de_DE';
