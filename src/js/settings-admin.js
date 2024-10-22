@@ -220,8 +220,8 @@ $(function() {
 		}
 		var langSlide = slide_params[lang];
 		langSlide.image_url = imgUrl;
-		OCP.Loader.loadScript('nmc_welcome_popup', 'nmc_welcome_popup-main.js').then(function () {
-			window.OCA.NMC_Welcome_Popup.Modal.previewSlide([langSlide]);
+		OCP.Loader.loadScript('nmc_welcome_popup', 'nmc_welcome_popup-main.mjs').then(function () {
+			window.OCA.NMC_Welcome_Popup.NcModal.previewSlide([langSlide]);
 		});
 		return false;
 	});
