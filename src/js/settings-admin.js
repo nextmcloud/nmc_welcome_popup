@@ -220,6 +220,7 @@ $(function() {
 		}
 		var langSlide = slide_params[lang];
 		langSlide.image_url = imgUrl;
+		console.log(langSlide);
 		OCP.Loader.loadScript('nmc_welcome_popup', 'nmc_welcome_popup-main.mjs').then(function () {
 			window.OCA.NMC_Welcome_Popup.NcModal.previewSlide([langSlide]);
 		});

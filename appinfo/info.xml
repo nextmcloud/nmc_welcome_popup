@@ -5,7 +5,7 @@
     <name>MagentaCloud Welcome Popup</name>
     <summary>general</summary>
     <description><![CDATA[general]]></description>
-    <version>1.1.1</version>
+    <version>1.2.1</version>
     <licence>agpl</licence>
     <author mail="yogesh.shejwadkar@t-systems.com" >Yogesh Shejwadkar</author>
     <namespace>NMC_Welcome_Popup</namespace>

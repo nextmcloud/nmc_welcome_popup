@@ -1,45 +1,25 @@
 <?php
 /**
- * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\NMC_Welcome_Popup\Controller;
 
+use OCA\NMC_Welcome_Popup\SlideManager;
+use OCA\NMC_Welcome_Popup\ImageManager;
+use OCA\NMC_Welcome_Popup\Settings\Admin;
 
-use OCA\NMC_Welcome_Popup\AppInfo\Application;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IL10N;
-use OCP\ILogger;
-use OCP\IURLGenerator;
 use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-
-use OCA\NMC_Welcome_Popup\SlideManager;
-use OCA\NMC_Welcome_Popup\ImageManager;
-use OCA\NMC_Welcome_Popup\Settings\Admin;
 
 class SlideController extends Controller {
 
@@ -61,12 +41,6 @@ class SlideController extends Controller {
 	/** @var IL10N */
 	private $l10n;
 
-	/** @var ILogger */
-	protected $logger;
-
-	/** @var IURLGenerator */
-	private $urlGenerator;
-
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
@@ -75,7 +49,6 @@ class SlideController extends Controller {
 	 * @param ImageManager $imageManager
 	 * @param Admin $admin
 	 * @param IL10N $l
-	 * @param IURLGenerator $urlGenerator
 	 */
 	public function __construct($appName,
 								IRequest $request,
@@ -83,9 +56,7 @@ class SlideController extends Controller {
 								SlideManager $slideManager,
 								ImageManager $imageManager,
 								Admin $admin,
-								IL10N $l,
-								ILogger $logger,
-								IURLGenerator $urlGenerator) {
+								IL10N $l) {
 		parent::__construct($appName, $request);
 
 		$this->config = $config;
@@ -93,8 +64,6 @@ class SlideController extends Controller {
 		$this->imageManager = $imageManager;
 		$this->admin = $admin;
 		$this->l10n = $l;
-		$this->logger = $logger;
-		$this->urlGenerator = $urlGenerator;
 	}
 
 	public function addSlide($slideId, $slide) {
@@ -114,7 +83,7 @@ class SlideController extends Controller {
 		} elseif ($slide[$en]['primary_button_label'] == '') {
 			$error = 'No Primary button label';
 		} elseif ($primaryBtnUrl == '') {
-			$error = 'No Primary button url';
+			$error = 'No Primary button URL';
 		} elseif (filter_var($primaryBtnUrl, FILTER_VALIDATE_URL) === false || (strpos($primaryBtnUrl, 'http://') !== 0 && strpos($primaryBtnUrl, 'https://') !== 0)) {
 			$error = 'Not a valid URL for primary button';
 		} elseif ($slide[$en]['secondary_button_desc'] == '') {

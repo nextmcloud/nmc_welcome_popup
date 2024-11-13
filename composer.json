@@ -1,13 +1,7 @@
 {
     "name": "nextmcloud/nmc_welcome_popup",
     "description": "MagentaCloud Welcome Popup",
-    "type": "project",
     "license": "AGPL",
-    "authors": [
-        {
-            "name": "Yogesh Shejwadkar"
-        }
-    ],
     "config": {
         "optimize-autoloader": true,
         "classmap-authoritative": true

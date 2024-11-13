@@ -11,7 +11,7 @@
 		@next="next"
 		@close="close">
 		<div class="modal-content">
-			<div v-if="currentSlide !== 0 || !withIntro" class="modal-header">
+			<div v-if="currentSlide !== 0" class="modal-header">
 				<div class="nmc_welcome_popup-header">
 					<h2 v-html="slideList[currentSlide].title" />
 				</div>
@@ -61,10 +61,8 @@ export default {
 	data() {
 		return {
 			showModal: false,
-			withIntro: true,
 			slides: [],
 			currentSlide: 0,
-			fadeDirection: 'next',
 			isMobile: window.outerWidth < 1024,
 			slidesLoaded: false,
 		}
@@ -97,30 +95,22 @@ export default {
 	},
 	methods: {
 		async loadStaticSlides() {
-			if (this.slidesLoaded) {
-				return
-			}
-
 			try {
 				const response = await axios.get(generateUrl('/apps/nmc_welcome_popup/wizard'))
 				this.slides = this.slides.slice(0, 1)
 				this.slides.push(...response.data.slides)
-				this.withIntro = response.data.hasVideo
-				// this.slidesLoaded = true
 			} catch (e) {
 				console.error('Failed to load slides')
 			}
 		},
-		async open(withIntro = true) {
+		async open() {
 			await this.loadStaticSlides()
-			this.withIntro = this.withIntro & withIntro
 			this.showModal = true
 			this.currentSlide = 0
 		},
 		previewSlide(slide = []) {
 			this.slides = this.slides.slice(0, 1)
 			this.slides.push(...slide)
-			this.withIntro = false
 			this.showModal = true
 			this.currentSlide = 0
 		},
@@ -129,14 +119,12 @@ export default {
 			axios.delete(generateUrl('/apps/nmc_welcome_popup/wizard'))
 		},
 		next() {
-			this.fadeDirection = 'next'
 			if (this.isLast) {
 				return
 			}
 			this.currentSlide += 1
 		},
 		previous() {
-			this.fadeDirection = 'previous'
 			if (this.isFirst) {
 				return
 			}

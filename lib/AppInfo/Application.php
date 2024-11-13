@@ -23,11 +23,10 @@
 
 namespace OCA\NMC_Welcome_Popup\AppInfo;
 
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\NMC_Welcome_Popup\Listener\AppEnabledListener;
 use OCA\NMC_Welcome_Popup\Listener\BeforeTemplateRenderedListener;
 use OCA\NMC_Welcome_Popup\Notification\Notifier;
-use OCP\App\ManagerEvent;
+use OCP\App\Events\AppEnableEvent;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -43,12 +42,12 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
-		$context->registerEventListener(ManagerEvent::EVENT_APP_ENABLE, AppEnabledListener::class);
+		$context->registerNotifierService(Notifier::class);
+		$context->registerEventListener(AppEnableEvent::class, AppEnabledListener::class);
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, BeforeTemplateRenderedListener::class);
 	}
 
 	public function boot(IBootContext $context): void {
-		$serverContainer = $context->getServerContainer();
-		$serverContainer->getNotificationManager()->registerNotifierService(Notifier::class);
+		// Everything is already done in register()
 	}
 }
