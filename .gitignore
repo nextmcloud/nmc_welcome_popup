@@ -9,6 +9,7 @@ node_modules/
 tests/.phpunit.result.cache
 /vendor-bin/mozart/vendor
 .DS_Store
-/css/**/*.css
 /css/**/*.css.map
+/js/**/*.mjs.map
+/js/**/*.mjs.map.license
 /dist/

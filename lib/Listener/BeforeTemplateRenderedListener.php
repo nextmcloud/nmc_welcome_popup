@@ -26,9 +26,7 @@ declare(strict_types=1);
 
 namespace OCA\NMC_Welcome_Popup\Listener;
 
-use OCA\NMC_Welcome_Popup\Notification\AppHint;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
-use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
@@ -36,33 +34,13 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 class BeforeTemplateRenderedListener implements IEventListener {
-	/**
-	 * @var IUserSession
-	 */
-	private $userSession;
-	/**
-	 * @var IConfig
-	 */
-	private $config;
-	/**
-	 * @var AppHint
-	 */
-	private $appHint;
-	/**
-	 * @var IJobList
-	 */
-	private $jobList;
 
 	public function __construct(
-		IConfig $config,
-		IUserSession $userSession,
-		IJobList $jobList,
-		AppHint $appHint
+		private IConfig $config,
+		private IUserSession $userSession,
 	) {
 		$this->userSession = $userSession;
 		$this->config = $config;
-		$this->appHint = $appHint;
-		$this->jobList = $jobList;
 	}
 
 	public function handle(Event $event): void {
