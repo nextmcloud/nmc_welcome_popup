@@ -11,7 +11,7 @@
 		@next="next"
 		@close="close">
 		<div class="modal-content">
-			<div v-if="currentSlide !== 0" class="modal-header">
+			<div class="modal-header">
 				<div class="nmc_welcome_popup-header">
 					<h2 v-html="slideList[currentSlide].title" />
 				</div>
@@ -99,12 +99,15 @@ export default {
 				const response = await axios.get(generateUrl('/apps/nmc_welcome_popup/wizard'))
 				this.slides = this.slides.slice(0, 1)
 				this.slides.push(...response.data.slides)
+				this.slidesLoaded = true
 			} catch (e) {
 				console.error('Failed to load slides')
 			}
 		},
 		async open() {
-			await this.loadStaticSlides()
+			if(!this.slidesLoaded) {
+				await this.loadStaticSlides()
+			}
 			this.showModal = true
 			this.currentSlide = 0
 		},
