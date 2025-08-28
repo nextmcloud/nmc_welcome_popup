@@ -1,7 +1,7 @@
 window.onload = function() { // can also use window.addEventListener('load', (event) => {
 	OCA.NMC_Welcome_Popup = OCA.NMC_Welcome_Popup || {};
 
-	var aboutEntry = document.querySelector('#nmc_welcome_popup-about button');
+	var aboutEntry = document.querySelector('a#nmc_welcome_popup-about');
 
 	if (aboutEntry) {
 		aboutEntry.addEventListener('click', function (event) {
