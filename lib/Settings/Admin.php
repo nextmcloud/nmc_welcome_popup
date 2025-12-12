@@ -28,14 +28,14 @@
 
 namespace OCA\NMC_Welcome_Popup\Settings;
 
-use OCA\NMC_Welcome_Popup\SlideManager;
 use OCA\NMC_Welcome_Popup\ImageManager;
+use OCA\NMC_Welcome_Popup\SlideManager;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\ISettings;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 class Admin implements ISettings {
 
@@ -54,21 +54,23 @@ class Admin implements ISettings {
 	/** @var IURLGenerator */
 	private $urlGenerator;
 
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	protected $logger;
 
-	public function __construct(IConfig $config,
-								IL10N $l,
-								ILogger $logger,
-								SlideManager $slideManager,
-								ImageManager $imageManager,
-								IURLGenerator $urlGenerator) {
+	public function __construct(
+		IConfig $config,
+		IL10N $l,
+		LoggerInterface $logger,
+		SlideManager $slideManager,
+		ImageManager $imageManager,
+		IURLGenerator $urlGenerator
+	) {
 		$this->config = $config;
 		$this->l = $l;
+		$this->logger = $logger;
 		$this->slideManager = $slideManager;
 		$this->imageManager = $imageManager;
 		$this->urlGenerator = $urlGenerator;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -77,14 +79,18 @@ class Admin implements ISettings {
 	public function getForm(): TemplateResponse {
 		$errorMessage = '';
 		$parameters = [];
+
 		$slideIds = explode(',', $this->config->getAppValue('nmc_welcome_popup', 'slideIds', '1'));
 		$slides = $this->slideManager->getSlides();
+
 		if (empty($slides)) {
 			$slideIds = [1];
 		} else {
 			$slideIds = array_keys($slides);
 		}
+
 		$this->config->setAppValue('nmc_welcome_popup', 'slideIds', implode(',', $slideIds));
+
 		$parameters['image_url'] = '';
 		if (isset($slides[$slideIds[0]])) {
 			$parameters = $slides[$slideIds[0]];
@@ -93,6 +99,7 @@ class Admin implements ISettings {
 				$parameters['image_url'] = $imageURL;
 			}
 		}
+
 		$parameters['slide_ids'] = $slideIds;
 		$parameters['uploadImageRoute'] = $this->urlGenerator->linkToRoute('nmc_welcome_popup.Slide.uploadImage');
 		$parameters['errorMessage'] = $errorMessage;
@@ -111,8 +118,6 @@ class Admin implements ISettings {
 	 * @return int whether the form should be rather on the top or bottom of
 	 * the admin section. The forms are arranged in ascending order of the
 	 * priority values. It is required to return a value between 0 and 100.
-	 *
-	 * E.g.: 70
 	 */
 	public function getPriority(): int {
 		return 5;

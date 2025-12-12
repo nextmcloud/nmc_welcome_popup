@@ -1,1 +1,2 @@
 window.onload=function(){OCA.NMC_Welcome_Popup=OCA.NMC_Welcome_Popup||{};var o=document.querySelector("a#nmc_welcome_popup-about");o&&o.addEventListener("click",function(e){return e.stopPropagation(),e.preventDefault(),OCP.Loader.loadScript("nmc_welcome_popup","nmc_welcome_popup-main.mjs").then(function(){OCA.NMC_Welcome_Popup.NcModal.open(),OC.hideMenus(function(){return!1})}),!0})};
+//# sourceMappingURL=nmc_welcome_popup-about.mjs.map

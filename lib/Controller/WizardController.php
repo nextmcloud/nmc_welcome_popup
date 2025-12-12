@@ -23,27 +23,30 @@ class WizardController extends Controller {
 	/** @var string */
 	protected $userId;
 
-	/** @var array|false|string[] */
+	/** @var string[] */
 	protected $slides = [];
 
+	/** @var IFactory */
 	private $l10nFactory;
 
 	/** @var ImageManager */
 	private $imageManager;
 
 	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param IConfig $config
-	 * @param string $userId
+	 * @param string    $appName
+	 * @param IRequest  $request
+	 * @param IConfig   $config
+	 * @param string    $userId
+	 * @param ImageManager $imageManager
+	 * @param IFactory  $l10nFactory
 	 */
 	public function __construct(
-			$appName,
-			IRequest $request,
-			IConfig $config,
-			$userId,
-			ImageManager $imageManager,
-			IFactory $l10nFactory
+		$appName,
+		IRequest $request,
+		IConfig $config,
+		$userId,
+		ImageManager $imageManager,
+		IFactory $l10nFactory
 	) {
 		parent::__construct($appName, $request);
 
@@ -52,14 +55,16 @@ class WizardController extends Controller {
 		$this->l10nFactory = $l10nFactory;
 		$this->imageManager = $imageManager;
 
-		$this->slides = explode(',', $this->config->getAppValue(Application::APP_ID, 'slides', 'video,values,apps,clients,final'));
+		$this->slides = explode(
+			',',
+			$this->config->getAppValue(Application::APP_ID, 'slides', 'video,values,apps,clients,final')
+		);
 	}
 
 	/**
 	 * @NoAdminRequired
-	 * @return DataResponse
 	 */
-	public function disable() {
+	public function disable(): DataResponse {
 		$version = $this->config->getAppValue('nmc_welcome_popup', 'version', '');
 		$this->config->setUserValue($this->userId, 'nmc_welcome_popup', 'show', $version);
 		return new DataResponse();
@@ -67,22 +72,52 @@ class WizardController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @return JsonResponse
 	 */
-	public function show() {
+	public function show(): JSONResponse {
 		$language = $this->l10nFactory->findLanguage();
 
 		$slides = [];
-		$slideArray = json_decode($this->config->getAppValue('nmc_welcome_popup', 'welcome_slides', '0'), true);
-		foreach($slideArray as $id=>$slide){
-			$imageURL = $this->imageManager->getImageUrl('welcome_image_'.$id);
-			$slides[] = array_merge($slide["$language"],array('image_url' => $imageURL));
+
+		// Rohwert aus der Config holen; Standard ist ein leeres JSON-Array
+		$rawSlides = $this->config->getAppValue('nmc_welcome_popup', 'welcome_slides', '[]');
+		$slideArray = json_decode($rawSlides, true);
+
+		// Sicherstellen, dass wir ein Array haben
+		if (!is_array($slideArray)) {
+			$slideArray = [];
+		}
+
+		foreach ($slideArray as $id => $slide) {
+			// Slide muss ein Array sein
+			if (!is_array($slide)) {
+				continue;
+			}
+
+			// Sprache muss vorhanden und ein Array sein
+			if (!isset($slide[$language]) || !is_array($slide[$language])) {
+				// Optional: Fallback auf 'en' oder erste Sprache
+				if (isset($slide['en']) && is_array($slide['en'])) {
+					$slideData = $slide['en'];
+				} else {
+					// irgendein erster Eintrag als Fallback
+					$first = reset($slide);
+					if (!is_array($first)) {
+						continue;
+					}
+					$slideData = $first;
+				}
+			} else {
+				$slideData = $slide[$language];
+			}
+
+			$imageURL = $this->imageManager->getImageUrl('welcome_image_' . $id);
+			$slides[] = array_merge($slideData, ['image_url' => $imageURL]);
 		}
 
 		return new JSONResponse([
-			'slides' => array_values(array_filter($slides, function ($slide) {
+			'slides' => array_values(array_filter($slides, static function ($slide) {
 				return $slide !== null;
-			}))
+			})),
 		]);
 	}
 }

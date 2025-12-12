@@ -32,6 +32,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Util;
 
 class BeforeTemplateRenderedListener implements IEventListener {
 
@@ -57,11 +58,11 @@ class BeforeTemplateRenderedListener implements IEventListener {
 		$show = $this->config->getUserValue($user->getUID(), 'nmc_welcome_popup', 'show', '1');
 
 		if ($show !== $version) {
-			\OC_Util::addScript('nmc_welcome_popup', 'nmc_welcome_popup-activate');
+			Util::addScript('nmc_welcome_popup', 'nmc_welcome_popup-activate');
 		}
 
-		\OCP\Util::addScript('nmc_welcome_popup', 'nmc_welcome_popup-about');
-		\OCP\Util::addStyle('nmc_welcome_popup', 'nmc_welcome_popup-style');
-		\OCP\Util::addStyle('nmc_welcome_popup', 'style');
+		Util::addScript('nmc_welcome_popup', 'nmc_welcome_popup-about');
+		Util::addStyle('nmc_welcome_popup', 'nmc_welcome_popup-style');
+		Util::addStyle('nmc_welcome_popup', 'style');
 	}
 }

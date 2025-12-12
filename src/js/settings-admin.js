@@ -7,7 +7,7 @@
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
- * License, or (at your opinion) any later version.
+ * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -41,6 +41,7 @@ var de = 'de_DE';
 				url: OC.linkToOCS('apps/provisioning_api/api/v1', 2) + 'config/apps' + '/nmc_welcome_popup/' + key + '?format=json'
 			});
 		},
+
 		init: function(callback) {
 			this._getAppConfig('slideIds').done(function (data){
 				if (data.ocs.data.data !== '') {
@@ -71,7 +72,7 @@ var de = 'de_DE';
 					success: function () {
 						OCA.NMC_Welcome_Popup.Admin.slideIds += ',' + nextId;
 						OCA.NMC_Welcome_Popup.Admin.noSlides = '0';
-						callback(nextId)
+						callback(nextId);
 					}
 				});
 			}
@@ -86,24 +87,26 @@ var de = 'de_DE';
 						slideIds.splice(index, 1);
 					}
 					var config = this.currentConfig;
-					$.ajax({ url: OC.generateUrl('/apps/nmc_welcome_popup/ajax/slideSettings/' + this.currentConfig), type: 'DELETE'})
-						.done(function(data) {
-							OCP.AppConfig.setValue('nmc_welcome_popup', 'slideIds', slideIds.join(','), {
-								success: function () {
-									if (slideIds.length > 0) {
-										OCA.NMC_Welcome_Popup.Admin.slideIds = slideIds.join(',');
-									} else {
-										OCA.NMC_Welcome_Popup.Admin.noSlides = '1';
-										OCA.NMC_Welcome_Popup.Admin.slideIds = '1';
-									}
-									callback(config);
+					$.ajax({
+						url: OC.generateUrl('/apps/nmc_welcome_popup/ajax/slideSettings/' + this.currentConfig),
+						type: 'DELETE'
+					}).done(function(data) {
+						OCP.AppConfig.setValue('nmc_welcome_popup', 'slideIds', slideIds.join(','), {
+							success: function () {
+								if (slideIds.length > 0) {
+									OCA.NMC_Welcome_Popup.Admin.slideIds = slideIds.join(',');
+								} else {
+									OCA.NMC_Welcome_Popup.Admin.noSlides = '1';
+									OCA.NMC_Welcome_Popup.Admin.slideIds = '1';
 								}
-							});
+								callback(config);
+							}
 						});
+					});
 				}
 			}
-		},
-	}
+		}
+	};
 })(OCA);
 
 function startLoading() {
@@ -113,15 +116,13 @@ function startLoading() {
 
 function startLoadingImg() {
 	// OC.msg.startSaving('#welcome_img_loaded_msg');
-	if ($('#welcome_img_loaded_msg').is(":hidden") == false) {
+	if ($('#welcome_img_loaded_msg').is(':hidden') === false) {
 		$('#welcome_img_loaded_msg').hide();
 	}
 	$('#welcome_img_loading').show();
 }
 
 $(function() {
-
-	// $('#welcome_popup [data-toggle="tooltip"]').tooltip();
 
 	var addSlideBtn = $('.slide-list .add-slide');
 	var slideDataId = '.slide-list li[data-id=';
@@ -132,25 +133,25 @@ $(function() {
 		$('#remove-img').hide();
 	}
 
-	if(!imgUrl) {
+	if (!imgUrl) {
 		imgUrl = $('#slide-image').data('imgurl');
 		$('#slide-image').data('imgurl', '');
 	}
 
-	$('#remove-img').click(function (e) {
+	$('#remove-img').click(function () {
 		var image_name = $('#slide-image').val();
 		var slideId = $('.slide-list .active').data('id');
 
 		startLoadingImg();
 		$.ajax({
-			type: "DELETE",
+			type: 'DELETE',
 			url: OC.generateUrl('/apps/nmc_welcome_popup/image/' + image_name),
-			data: {'slideId' : slideId}
+			data: { 'slideId': slideId }
 		}).done(function(response) {
 			OC.msg.finishedSaving('#welcome_img_loaded_msg', response);
 			$('#welcome_img_loading').hide();
-			$("#slide-image").val("");
-			$("#image-uploaded").text("");
+			$('#slide-image').val('');
+			$('#image-uploaded').text('');
 			$('#remove-img').hide();
 		}).fail(function(response) {
 			OC.msg.finishedError('#welcome_img_loaded_msg', response.responseJSON.status);
@@ -158,42 +159,92 @@ $(function() {
 		});
 	});
 
-	$('.fileupload').fileupload({
-		pasteZone: null,
-		dropZone: null,
-		done: function (e, response) {
-			var $form = $(e.target).closest('form');
-			var key = $form.data('image-key');
-
-			// OC.msg.finishedSaving('#welcome_img_loaded_msg', response.result);
-			$form.find('label.button').addClass('icon-upload').removeClass('icon-loading-small');
-			$('#welcome_img_loading').hide();
-			$("#image-uploaded").text(response.result.data.name);
-			$("#slide-image").val(response.result.data.image);
-			imgUrl = response.result.data.url;
-			// $('#remove-img').show();
-		},
-		submit: function(e, response) {
-			var $form = $(e.target).closest('form');
-			var key = $form.data('image-key');
-			startLoadingImg();
-			$form.find('label.button').removeClass('icon-upload').addClass('icon-loading-small');
-		},
-		fail: function (e, response){
-			var $form = $(e.target).closest('form');
-			OC.msg.finishedError('#welcome_img_loaded_msg', response._response.jqXHR.responseJSON.data.message);
-			$form.find('label.button').addClass('icon-upload').removeClass('icon-loading-small');
-			$('#welcome_img_loading').hide();
+	/**
+	 * Ersatz für das entfernte jQuery FileUpload-Plugin:
+	 * Upload der Bild-Datei per FormData + $.ajax
+	 */
+	$('.fileupload').on('change', function (e) {
+		var input = this;
+		var file = input.files && input.files[0];
+		if (!file) {
+			return;
 		}
-	});
-	
-	$('#add_new_popup').click(function() {
 
+		var $form = $(input).closest('form');
+		var url = $form.attr('action');
+
+		if (!url) {
+			// Fallback: falls kein action-Attribut gesetzt ist, ggf. hier OC.generateUrl(...) nutzen
+			console.error('No form action defined for image upload.');
+			return;
+		}
+
+		startLoadingImg();
+		$form.find('label.button')
+			.removeClass('icon-upload')
+			.addClass('icon-loading-small');
+
+		var formData = new FormData($form[0]);
+		// sicherstellen, dass die Datei im FormData ist
+		var fieldName = $(input).attr('name') || 'file';
+		formData.set(fieldName, file);
+
+		$.ajax({
+			url: url,
+			method: 'POST',
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function (response) {
+				// hier ist response das, was vorher response.result war
+				if (response && response.data) {
+					$('#image-uploaded').text(response.data.name || '');
+					$('#slide-image').val(response.data.image || '');
+					imgUrl = response.data.url || imgUrl;
+				}
+
+				$form.find('label.button')
+					.addClass('icon-upload')
+					.removeClass('icon-loading-small');
+				$('#welcome_img_loading').hide();
+			},
+			error: function (xhr) {
+				let msg = t('nmc_welcome_popup', 'Image upload failed');
+
+				// 422 (Unprocessable Entity) – typischer Uploadfehler
+				if (xhr.status === 422) {
+					if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+						msg = xhr.responseJSON.data.message;
+					} else {
+						msg = t('nmc_welcome_popup', 'The uploaded file is too large or invalid.');
+					}
+				}
+
+				// Falls andere Fehler einen "status: failure" Wrapper nutzen
+				else if (xhr.responseJSON && xhr.responseJSON.status === 'failure') {
+					if (xhr.responseJSON.data && xhr.responseJSON.data.message) {
+						msg = xhr.responseJSON.data.message;
+					}
+				}
+
+				OC.msg.finishedError('#welcome_img_loaded_msg', msg);
+
+				$form.find('label.button')
+					.addClass('icon-upload')
+					.removeClass('icon-loading-small');
+
+				$('#welcome_img_loading').hide();
+			}
+		});
+	});
+
+	$('#add_new_popup').click(function() {
 		var slideId = $('.slide-list .active').data('id');
 
 		startLoading();
 		$.post(
-			OC.generateUrl('/apps/nmc_welcome_popup/ajax/slideSettings/' + slideId), getParams()
+			OC.generateUrl('/apps/nmc_welcome_popup/ajax/slideSettings/' + slideId),
+			getParams()
 		).done(function(response) {
 			OC.msg.finishedSaving('#welcome_settings_msg', response);
 			$('#welcome_settings_loading').hide();
@@ -213,8 +264,8 @@ $(function() {
 		var slide_params = getParams().slide;
 		var image_name = slide_params.image_uploaded;
 		if (!image_name) {
-			imgUrl = "";
-		} else if(!imgUrl) {
+			imgUrl = '';
+		} else if (!imgUrl) {
 			var cachebusterImg = Math.round(new Date().getTime() / 1000);
 			imgUrl = OC.generateUrl('/apps/nmc_welcome_popup/image/' + image_name) + '?v=' + cachebusterImg;
 		}
@@ -233,7 +284,7 @@ $(function() {
 		var en_primaryBtnUrl = $('#' + en + '-primary-button-url').val();
 		var en_secondaryBtnDesc = $('#' + en + '-secondary-button-desc').val();
 		var en_text = $('#' + en + '-text').val();
-		
+
 		var de_title = $('#' + de + '-slide-title').val();
 		var de_primaryBtnLbl = $('#' + de + '-primary-button-label').val();
 		var de_primaryBtnUrl = $('#' + de + '-primary-button-url').val();
@@ -242,7 +293,25 @@ $(function() {
 
 		var image_name = $('#slide-image').val();
 
-		return {'slide': {'en_GB' : {'title' : en_title, 'primary_button_label' : en_primaryBtnLbl, 'primary_button_url' : en_primaryBtnUrl, 'secondary_button_desc' : en_secondaryBtnDesc, 'content': en_text}, 'de_DE' : {'title' : de_title, 'primary_button_label' : de_primaryBtnLbl, 'primary_button_url' : de_primaryBtnUrl, 'secondary_button_desc' : de_secondaryBtnDesc, 'content': de_text},'image_uploaded' : image_name}};
+		return {
+			'slide': {
+				'en_GB': {
+					'title': en_title,
+					'primary_button_label': en_primaryBtnLbl,
+					'primary_button_url': en_primaryBtnUrl,
+					'secondary_button_desc': en_secondaryBtnDesc,
+					'content': en_text
+				},
+				'de_DE': {
+					'title': de_title,
+					'primary_button_label': de_primaryBtnLbl,
+					'primary_button_url': de_primaryBtnUrl,
+					'secondary_button_desc': de_secondaryBtnDesc,
+					'content': de_text
+				},
+				'image_uploaded': image_name
+			}
+		};
 	}
 
 	OCA.NMC_Welcome_Popup.Admin.init(function() {
@@ -252,53 +321,51 @@ $(function() {
 	var switchSlide = function(slideId) {
 		$('.slide-list li').removeClass('active');
 		$(slideDataId + '"' + slideId + '"]').addClass('active');
-		if ($('#welcome_img_loaded_msg').is(":hidden") == false) {
+		if ($('#welcome_img_loaded_msg').is(':hidden') === false) {
 			$('#welcome_img_loaded_msg').hide();
 		}
-		if ($('#welcome_settings_msg').is(":hidden") == false) {
+		if ($('#welcome_settings_msg').is(':hidden') === false) {
 			$('#welcome_settings_msg').hide();
 		}
 		OCA.NMC_Welcome_Popup.Admin.currentConfig = '' + slideId;
 		$.get(OC.generateUrl('/apps/nmc_welcome_popup/ajax/slideSettings/' + slideId)).done(function(data) {
 			if (Object.entries(data).length > 0) {
-				Object.keys(data).forEach(function(form_section){
-					if (form_section == en || form_section == de) {
+				Object.keys(data).forEach(function(form_section) {
+					if (form_section === en || form_section === de) {
 						var entries = data[form_section];
 						Object.keys(entries).forEach(function (configKey) {
 							var element = $('#welcome_popup *[data-key="' + form_section + '_' + configKey + '"]');
-							if(element.is('input') && (element.prop('type') === 'text' || element.prop('type') === 'number' || element.prop('type') === 'url')) {
-								element.val(entries[configKey])
-							}
-							else if(element.is('textarea')) {
+							if (element.is('input') && (element.prop('type') === 'text' || element.prop('type') === 'number' || element.prop('type') === 'url')) {
 								element.val(entries[configKey]);
-							}
-							else if(element.prop('type') === 'checkbox') {
+							} else if (element.is('textarea')) {
+								element.val(entries[configKey]);
+							} else if (element.prop('type') === 'checkbox') {
 								var value = entries[configKey] === '1' ? '1' : '0';
 								element.val(value);
 							} else {
 								console.log('unable to find element for ' + configKey);
 							}
 						});
-					} else if (form_section == 'image_uploaded') {
-						$("#slide-image").val(data[form_section]);
+					} else if (form_section === 'image_uploaded') {
+						$('#slide-image').val(data[form_section]);
 						if ($('#slide-image').val()) {
 							$('#remove-img').show();
 						} else {
 							$('#remove-img').hide();
 						}
-					} else if (form_section == 'image_url') {
+					} else if (form_section === 'image_url') {
 						imgUrl = data[form_section];
 					}
 				});
 			} else {
 				var element = $('#welcome_popup *[data-key]');
-				element.val("");
-				$("#slide-image").val("");
+				element.val('');
+				$('#slide-image').val('');
 				$('#remove-img').hide();
 			}
-			var imgName = $("#image-name");
+			var imgName = $('#image-name');
 			imgName.val(imgName.data('key') + '_' + slideId);
-			$("#image-uploaded").text("");
+			$('#image-uploaded').text('');
 			$('input:checkbox[value="1"]').attr('checked', true);
 			$('input:checkbox[value="0"]').attr('checked', false);
 		});
@@ -322,7 +389,7 @@ $(function() {
 
 	$('#remove_slide').on('click', function() {
 		OCA.NMC_Welcome_Popup.Admin.removeSlide(function(currentConfig) {
-			OC.msg.finishedSuccess('#remove_slide_msg', "Slide removed");
+			OC.msg.finishedSuccess('#remove_slide_msg', 'Slide removed');
 			var slideIds = OCA.NMC_Welcome_Popup.Admin.slideIds.split(',');
 			if (OCA.NMC_Welcome_Popup.Admin.noSlides === '0') {
 				$(slideDataId + '"' + currentConfig + '"]').remove();
@@ -332,16 +399,16 @@ $(function() {
 				$(slideDataId + '"' + currentConfig + '"]').attr('data-id', slideIds[0]);
 				switchSlide(slideIds[0]);
 			}
-			if (addSlideBtn.is(":hidden")) {
+			if (addSlideBtn.is(':hidden')) {
 				addSlideBtn.show();
 			}
 		});
 	});
 
 	function renameSlides(slideIds) {
-		for (id = 0; id < slideIds.length; id++) {
-			$(slideDataId +'"' + slideIds[id] + '"] a').text(function(_,text){
-				return "Slide " + (id + 1);
+		for (var id = 0; id < slideIds.length; id++) {
+			$(slideDataId + '"' + slideIds[id] + '"] a').text(function() {
+				return 'Slide ' + (id + 1);
 			});
 		}
 	}

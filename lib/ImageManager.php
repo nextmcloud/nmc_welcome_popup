@@ -2,18 +2,6 @@
 /**
  * @copyright Copyright (c) 2016 Julius Härtl <jus@bitgrid.net>
  *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Gary Kim <gary@garykim.dev>
- * @author Jacob Neplokh <me@jacobneplokh.com>
- * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
- * @author Julien Veyssier <eneiluj@posteo.net>
- * @author Julius Haertl <jus@bitgrid.net>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Michael Weimann <mail@michael-weimann.eu>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,10 +25,9 @@ use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
-use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IConfig;
-use OCP\ILogger;
 use OCP\IURLGenerator;
+use Psr\Log\LoggerInterface;
 
 class ImageManager {
 
@@ -52,13 +39,15 @@ class ImageManager {
 	private $urlGenerator;
 	/** @var array */
 	private $supportedImageKeys = ['background', 'logo', 'logoheader', 'favicon', 'welcome_image'];
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	private $logger;
 
-	public function __construct(IConfig $config,
-								IAppData $appData,
-								IURLGenerator $urlGenerator,
-								ILogger $logger) {
+	public function __construct(
+		IConfig $config,
+		IAppData $appData,
+		IURLGenerator $urlGenerator,
+		LoggerInterface $logger
+	) {
 		$this->config = $config;
 		$this->appData = $appData;
 		$this->urlGenerator = $urlGenerator;
@@ -67,29 +56,29 @@ class ImageManager {
 
 	public function getImageUrl(string $key): string {
 		$cacheBusterCounter = $this->config->getAppValue('nmc_welcome_popup', $key . '_cachebuster', '0');
-		try {
-			return $this->urlGenerator->linkToRoute('nmc_welcome_popup.Slide.getImage', [ 'key' => $key ]) . '?v=' . $cacheBusterCounter;
-		} catch (NotFoundException $e) {
-		}
+		return $this->urlGenerator->linkToRoute(
+			'nmc_welcome_popup.Slide.getImage',
+			['key' => $key]
+		) . '?v=' . $cacheBusterCounter;
 	}
 
-	public function getImageUrlAbsolute(string $key, bool $useSvg = true): string {
-		return $this->urlGenerator->getAbsoluteURL($this->getImageUrl($key, $useSvg));
+	public function getImageUrlAbsolute(string $key): string {
+		return $this->urlGenerator->getAbsoluteURL($this->getImageUrl($key));
 	}
 
 	/**
 	 * @param string $key
-	 * @param bool $useSvg
 	 * @return ISimpleFile
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
 	public function getImage(string $key): ISimpleFile {
-		$img = $this->config->getAppValue('nmc_welcome_popup', $key . '_mime', '');
 		$folder = $this->appData->getFolder('images');
-		if ($img === '' || !$folder->fileExists($key)) {
+
+		if (!$folder->fileExists($key)) {
 			throw new NotFoundException();
 		}
+
 		return $folder->getFile($key);
 	}
 
@@ -104,7 +93,7 @@ class ImageManager {
 		return $images;
 	}
 
-	public function delete(string $key) {
+	public function delete(string $key): void {
 		try {
 			$file = $this->appData->getFolder('images')->getFile($key);
 			$file->delete();
@@ -119,9 +108,11 @@ class ImageManager {
 		try {
 			$this->delete($key);
 		} catch (NotFoundException $e) {
+			// ignorieren, wenn noch nichts existiert
 		} catch (NotPermittedException $e) {
 			throw new \Exception("Can't upload image. Permission denied.");
 		}
+
 		try {
 			$folder = $this->appData->getFolder('images');
 		} catch (NotFoundException $e) {
@@ -131,14 +122,20 @@ class ImageManager {
 		$target = $folder->newFile($key);
 		$supportedFormats = $this->getSupportedUploadImageFormats();
 		$detectedMimeType = mime_content_type($tmpFile);
+
 		if (!in_array($detectedMimeType, $supportedFormats, true)) {
 			throw new \Exception('Unsupported image type');
 		}
 
 		$target->putContent(file_get_contents($tmpFile));
+
+		// 🔴 vorher nur cachebuster gesetzt
+		$this->config->setAppValue('nmc_welcome_popup', $key . '_mime', $detectedMimeType);
 		$this->config->setAppValue('nmc_welcome_popup', $key . '_cachebuster', substr(time(), -4));
+
 		return $detectedMimeType;
 	}
+
 
 	/**
 	 * Returns a list of supported mime types for image uploads.
@@ -146,8 +143,6 @@ class ImageManager {
 	 * @return array
 	 */
 	private function getSupportedUploadImageFormats(): array {
-		$supportedFormats = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/svg'];
-		return $supportedFormats;
+		return ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/svg'];
 	}
-
 }
